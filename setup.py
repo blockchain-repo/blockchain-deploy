@@ -1,0 +1,106 @@
+"""
+BigchainDB: A Scalable Blockchain Database
+
+For full docs visit https://bigchaindb.readthedocs.org
+
+"""
+from setuptools import setup, find_packages
+
+
+# get the version
+version = {}
+with open('deploy/version.py') as fp:
+    exec(fp.read(), version)
+
+
+# check if setuptools is up to date
+def check_setuptools_features():
+    import pkg_resources
+    try:
+        list(pkg_resources.parse_requirements('foo~=1.0'))
+    except ValueError:
+        exit('Your Python distribution comes with an incompatible version '
+             'of `setuptools`. Please run:\n'
+             ' $ pip3 install --upgrade setuptools\n'
+             'and then run this command again')
+
+
+check_setuptools_features()
+
+
+tests_require = [
+    'coverage',
+    'pep8',
+    'flake8',
+    'pylint',
+    'pytest',
+    'pytest-cov~=2.2.1',
+    'pytest-xdist',
+    'pytest-flask',
+]
+
+dev_require = [
+    'ipdb',
+    'ipython',
+]
+
+docs_require = [
+    'Sphinx~=1.3.5',
+    'recommonmark~=0.4.0',
+    'sphinx-rtd-theme~=0.1.9',
+    'sphinxcontrib-httpdomain~=1.5.0',
+]
+
+benchmarks_require = [
+    'line-profiler==1.0',
+]
+
+install_requires = [
+    # 'fabric3==1.13.1.post1',
+    'fabric3',
+    'python-rapidjson~=0.0.8',
+
+]
+
+setup(
+    name='{}'.format("unichain_deploy"),
+    version=version['__version__'],
+    description='Cluster Deploy For Unichain',
+    long_description=__doc__,
+    url='http://git.oschina.net/wxcsdb88',
+    author='XIN WANG',
+    author_email='wx_cs_db_88@163.com',
+    license='MIT',
+    zip_safe=False,
+
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development',
+        'Topic :: Software Development :: Build Tools',
+        'Natural Language :: English',
+        # Pick your license as you wish (should match "license" above)
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        #'Operating System :: MacOS :: MacOS X',
+        'Operating System :: POSIX :: Linux',
+    ],
+
+    packages=find_packages(exclude=['tests*']),
+
+    entry_points={
+        'console_scripts': [
+            '{}=deploy.commands.main:main'.format("deploy")
+        ],
+    },
+    install_requires=install_requires,
+    setup_requires=['pytest-runner'],
+    tests_require=tests_require,
+    extras_require={
+        'test': tests_require,
+        # 'dev': dev_require + tests_require + docs_require + benchmarks_require,
+        'docs': docs_require,
+    },
+)
