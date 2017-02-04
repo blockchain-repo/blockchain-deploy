@@ -31,7 +31,7 @@ unichain_confiles = os.getcwd()
 
 keypairs_path = os.chdir('../script')
 if os.path.isfile('keypairs.py'):
-    from deploy.script.keypairs import keypairs_list
+    from keypairs import keypairs_list
 
 os.chdir(unichain_confiles)
 

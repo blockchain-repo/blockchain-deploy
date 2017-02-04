@@ -54,6 +54,9 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 echo -e "[INFO]=========init control machine env========="
 ./run_init_env.sh
 
+echo -e "[INFO]=========check control machine deploy files is ok!========="
+./run_pre_check.sh
+
 #must remove old
 echo -e "[INFO]==========init all nodes env=========="
 fab init_all_nodes

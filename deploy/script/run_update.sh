@@ -22,6 +22,9 @@ fi
 source ./blockchain_nodes_conf_util.sh
 source ./common_lib.sh
 
+echo -e "[INFO]=========check control machine deploy files is ok!========="
+./run_pre_check.sh
+
 ##check blocknodes_conf format
 echo -e "[INFO]==========check cluster nodes conf=========="
 check_cluster_nodes_conf || {

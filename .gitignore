@@ -74,14 +74,17 @@ ntools/one-m/ansible/hosts
 ntools/one-m/ansible/ansible.cfg
 
 # Some files created when deploying a cluster on
-ul_deploy/conf/collectd.conf
-ul_deploy/conf/rethinkdb.conf
-deploy/conf/unichain_confiles/
-ul_deploy/conf/keypairs.py
+deploy/conf/collectd.conf
+deploy/conf/rethinkdb.conf
+deploy/conf/unichain_confiles
+deploy/script/keypairs.py
 # *.gz
 
 #first push should commend and none after
-ul_deploy/conf/blockchain_nodes
-ul_deploy/conf/monitor_config
+deploy/conf/blockchain_nodes
+deploy/conf/monitor_config
 
-#ul_tests/
+deploy/conf/template/unichain.conf.template
+deploy/sources/*.gz
+
+tests/

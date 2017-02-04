@@ -50,12 +50,13 @@ def local_update_apt_pip(apt=True, pip=True):
 def update_apt_pip(apt=True, pip=True):
     with settings(warn_only=True):
         if apt:
-            put("../sources/sources.list", "/etc/apt/")
+            put("../sources/sources.list", "/etc/apt/",
+                mode=0x0600, use_sudo=True)
             run("echo renew the apt sources.list")
         if pip:
             if run("test -d ~/.pip").failed:
                 run("mkdir ~/.pip")
-            put("../sources/pip.conf", "~/.pip/")
+            put("../sources/pip.conf", "~/.pip/",  mode=0x0600)
             run("echo renew the pip.conf")
 
 @task
