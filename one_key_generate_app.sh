@@ -57,24 +57,25 @@ else
 	echo "部署程序不更新"
 fi
 
+# wget -P sources http://ojarf7dqy.bkt.clouddn.com/unichain-archive.tar.gz
+# wget -P sources http://ojarf7dqy.bkt.clouddn.com/unichain.conf.template
+
 # 3. 检测 sources目录下是否存在文件 unichain.conf.template, unichain-archive.tar.gz
 check_flag=0
 if [ ! -f "sources/${filename_templeate_conf}" ]; then
     echo -e "\033[31m sources/$filename_templeate_conf not exist!\033[0m"
     check_flag=1
-    wget -P sources http://ojarf7dqy.bkt.clouddn.com/${filename_templeate_conf}
 fi
 
 if [ ! -f "sources/${filename_app_tar_gz}" ]; then
     echo -e "\033[31m sources/${filename_app_tar_gz} not exist!\033[0m"
     check_flag=1
-    wget -P sources http://ojarf7dqy.bkt.clouddn.com/${filename_app_tar_gz}
 fi
 
-#if [ ${check_flag} != 0 ]; then
-#	echo "sources目录文件缺失，请检查后再操作！"
-#	exit 1
-#fi
+if [ ${check_flag} != 0 ]; then
+	echo "sources目录文件缺失，请检查后再操作！"
+	exit 1
+fi
 
 #git archive --format=tar.gz --remote=origin ${UNICHAIN_DEPLOY_TAG}| gzip >${filename_app_tar_gz}
 
