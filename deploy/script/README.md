@@ -14,10 +14,10 @@ app 配置文件位置 deploy/conf/__init__.py
 
 源配置在`deploy/sources`下，apt配置为`sources.list`, pip配置为`pip.conf`
 
-## 3. 获取应用基本配置模板及安装包
+## 3. 检查应用基本配置模板及安装包
 
-- 获取配置文件模板并放到`deploy/conf/template/`下，命名为`unichain.conf.template`
-- 获取程序安装包并放到`deploy/sources/`下，命名为`unichain-archive.tar.gz`
+- 检测配置模板文件 `deploy/conf/template/nichain.conf.template` 是否存在
+- 检测程序安装包文件 `deploy/sources/unichain-archive.tar.gz` 是否存在
 
 ## 4. 安装或更新操作
 在执行安装或更新操作前，请务必先执行获取模板及安装包的操作！
