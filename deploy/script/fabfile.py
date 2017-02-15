@@ -410,7 +410,48 @@ def uninstall_unichain(service_name=None, setup_name=None):
             sudo('dpkg --purge collectd')
         sudo("echo 'uninstall ls over'")
 
+# 彻底卸载
+@task
+@parallel
+def purge_unichain(service_name=None, setup_name=None):
+    with settings(warn_only=True):
+        if not service_name:
+            service_name = _service_name
+            setup_name = _setup_name
 
+        # shred delete files
+        cmd_destroy = "shred -fuz -n 5 -v "
+
+        run('echo "[INFO]==========uninstall {}-pro=========="'.format(service_name))
+        sudo('/bin/rm ~/.{}'.format(service_name))
+        sudo('killall -9 {} 2>/dev/null'.format(service_name))
+        sudo('killall -9 {}_api 2>/dev/null'.format(service_name))
+        sudo('killall -9 pip,pip3 2>/dev/null')
+        sudo('{} '.format(cmd_destroy))
+
+        # purge del files
+        sudo('{} `find /usr/local/bin/{}* -type f 2>/dev/null`'.format(cmd_destroy, service_name))
+        sudo('/bin/rm /usr/local/bin/{} 2>/dev/null'.format(service_name))
+
+        # purge del files
+        sudo('{} `find /usr/local/lib/python3.4/dist-packages/{}* -type f 2>/dev/null`'
+             .format(cmd_destroy, setup_name))
+        sudo('/bin/rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
+
+        # purge del files
+        sudo('{} `find ~/{}* -type f 2>/dev/null`'.format(cmd_destroy, service_name))
+        sudo('/bin/rm -rf ~/{} 2>/dev/null'.format(service_name))
+
+        sudo('pip3 uninstall -y plyvel')
+        sudo('apt-get remove --purge -y libleveldb1')
+        sudo('apt-get remove --purge -y libleveldb-dev')
+        sudo('apt-get remove --purge -y rethinkdb')
+        try:
+            sudo('dpkg --purge collectd')
+        except:
+            fixed_dpkg_error()
+            sudo('dpkg --purge collectd')
+        sudo("echo 'uninstall ls over'")
 
 
 
