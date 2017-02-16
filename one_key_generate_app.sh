@@ -14,7 +14,8 @@ CUR_INSTALL_PATH=$(cd "$(dirname "$0")"; pwd)
 DEVOPS_NAME=unichain_devops
 
 # ssh方式 git仓库地址
-UNICHAIN_DEPLOY_URL=git@git.oschina.net:wxcsdb88/unichain_deploy.git
+#UNICHAIN_DEPLOY_URL=git@git.oschina.net:wxcsdb88/unichain_deploy.git
+UNICHAIN_DEPLOY_URL=https://git.oschina.net/wxcsdb88/unichain_deploy.git
 UNICHAIN_DEPLOY_NAME=unichain_deploy
 # 分之或者tag名
 UNICHAIN_DEPLOY_TAG=v1.0

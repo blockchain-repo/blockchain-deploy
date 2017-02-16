@@ -88,3 +88,4 @@ deploy/conf/template/unichain.conf.template
 deploy/sources/*.gz
 
 tests/
+test/
