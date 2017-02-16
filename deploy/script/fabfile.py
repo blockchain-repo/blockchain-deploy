@@ -322,14 +322,14 @@ def install_unichain_from_git_archive(service_name=None):
     put('unichain-archive.tar.gz')
     user_group = env.user
     with settings(warn_only=True):
-        if run("test -d ./{}".format(service_name)).failed:
+        if run("test -d {}".format(service_name)).failed:
             run("echo 'create {} directory' ".format(service_name))
-            sudo("mkdir -p ./{}".format(service_name), user=env.user, group=env.user)
+            sudo("mkdir -p {}".format(service_name), user=env.user, group=env.user)
             #sudo("chown -R " + user_group + ':' + user_group + ' ~/')
         else:
             run("echo 'remove old {} directory' ".format(service_name))
-            sudo("rm -rf ./{}/*".format(service_name))
-    run('tar xvfz unichain-archive.tar.gz -C ./{} >/dev/null 2>&1'.format(service_name))
+            sudo("rm -rf {}/*".format(service_name))
+    run('tar xvfz unichain-archive.tar.gz {} >/dev/null 2>&1'.format(service_name))
     sudo('pip3 install -i https://pypi.doubanio.com/simple --upgrade setuptools')
     sudo('pip3 install pysha3==1.0.0')
     # must install dependency first!
