@@ -19,7 +19,7 @@ CUR_INSTALL_PATH=$(cd "$(dirname "$0")"; pwd)
 
 # git仓库地址
 UNICHAIN_URL=https://git.oschina.net/affirm/unichain.git
-UNICHAIN_NAME=unichain_test
+UNICHAIN_NAME=unichain
 # 分之或者tag名
 UNICHAIN_TAG=dev
 

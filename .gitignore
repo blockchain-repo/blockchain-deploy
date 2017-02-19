@@ -85,7 +85,8 @@ deploy/conf/blockchain_nodes
 deploy/conf/monitor_config
 
 deploy/conf/template/unichain.conf.template
-deploy/sources/*.gz
+#deploy/sources/*.gz
+deploy/sources/
 
 tests/
 test/
