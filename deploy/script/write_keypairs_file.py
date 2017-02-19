@@ -15,8 +15,7 @@ Using the list in other Python scripts:
 """
 
 import argparse
-from deploy.common import crypto
-# from deploy.script.hostlist import public_dns_names,public_hosts
+import crypto
 import os
 
 # Parse the command-line arguments

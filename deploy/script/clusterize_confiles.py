@@ -23,9 +23,9 @@ import argparse
 import json
 import os
 
-from deploy.script.hostlist import public_hosts
-from deploy.script.monitor_server import gMonitorServer
-from deploy.script.multi_apps_conf import app_config
+from hostlist import public_hosts
+from monitor_server import gMonitorServer
+from multi_apps_conf import app_config
 
 unichain_confiles = os.getcwd()
 

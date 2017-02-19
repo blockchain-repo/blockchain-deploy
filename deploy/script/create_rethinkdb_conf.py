@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 import os.path
 import shutil
 
-from deploy.script.hostlist import public_hosts
+from hostlist import public_hosts
 
 
 conf_filename = "rethinkdb.conf"

@@ -4,7 +4,7 @@ import os.path
 
 # import reg_utils # usage reg_utils.reg_nodes,...
 
-from deploy.common.reg_utils import reg_nodes,reg_ip
+from reg_utils import reg_nodes,reg_ip
 
 conf_filename = "blockchain_nodes"
 

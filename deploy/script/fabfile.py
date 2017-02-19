@@ -10,7 +10,7 @@ from __future__ import with_statement, unicode_literals
 from os import environ  # a mapping (like a dict)
 import sys
 
-from fabric.api import sudo,cd, env, hosts, local
+from fabric.api import sudo,cd, env, hosts, local, runs_once
 from fabric.api import task, parallel
 from fabric.contrib.files import sed
 from fabric.operations import run, put, get
@@ -18,21 +18,21 @@ from fabric.context_managers import settings
 
 import json
 
-from deploy.script.hostlist import public_dns_names,public_hosts,public_pwds,public_host_pwds
+from hostlist import public_dns_names,public_hosts,public_pwds,public_host_pwds
 
 ################################ Fabric Initial Config Data  ######################################
 
 env['passwords'] = public_host_pwds
 env['hosts']=env['passwords'].keys()
 
-from deploy.script.multi_apps_conf import app_config
+from multi_apps_conf import app_config
 
 _server_port = app_config['server_port']
 _restore_server_port = app_config['restore_server_port']
 _service_name = app_config['service_name']
 _setup_name = app_config['setup_name']
 
-
+@runs_once
 @task
 def local_update_apt_pip(apt=True, pip=True):
     with settings(warn_only=True):
@@ -331,7 +331,6 @@ def install_unichain_from_git_archive(service_name=None):
             sudo("rm -rf {}/*".format(service_name))
     run('tar xvfz unichain-archive.tar.gz {} >/dev/null 2>&1'.format(service_name))
     sudo('pip3 install -i https://pypi.doubanio.com/simple --upgrade setuptools')
-    sudo('pip3 install pysha3==1.0.0')
     # must install dependency first!
     install_dependency()
 
@@ -386,29 +385,31 @@ def init_localdb(service_name=None):
 # uninstall old unichain
 @task
 @parallel
-def uninstall_unichain(service_name=None, setup_name=None):
+def uninstall_unichain(service_name=None, setup_name=None, only_code=True):
     with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
             setup_name = _setup_name
         run('echo "[INFO]==========uninstall {}-pro=========="'.format(service_name))
-        sudo('rm ~/.{}'.format(service_name))
-        sudo('killall -9 {} 2>/dev/null'.format(service_name))
-        sudo('killall -9 {}_api 2>/dev/null'.format(service_name))
-        sudo('killall -9 pip,pip3 2>/dev/null')
-        sudo('rm /usr/local/bin/{} 2>/dev/null'.format(service_name))
-        sudo('rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
-        sudo('rm -rf ~/{} 2>/dev/null'.format(service_name))
-        sudo('pip3 uninstall -y plyvel')
-        sudo('apt-get remove --purge -y libleveldb1')
-        sudo('apt-get remove --purge -y libleveldb-dev')
-        sudo('apt-get remove --purge -y rethinkdb')
-        try:
-            sudo('dpkg --purge collectd')
-        except:
-            fixed_dpkg_error()
-            sudo('dpkg --purge collectd')
-        sudo("echo 'uninstall ls over'")
+        stop_unichain()
+        stop_rethinkdb()
+
+        if not only_code:
+            sudo('apt-get remove --purge -y rethinkdb')
+            try:
+                sudo('apt-get remove --purge -y collectd')
+            except:
+                fixed_dpkg_error()
+            sudo('pip3 uninstall -y plyvel')
+            sudo('apt-get remove --purge -y libleveldb1')
+            sudo('apt-get remove --purge -y libleveldb-dev')
+            sudo('killall -9 pip,pip3 2>/dev/null')
+
+        sudo('/bin/rm ~/.{}'.format(service_name))
+        sudo('/bin/rm /usr/local/bin/{}* 2>/dev/null'.format(service_name))
+        sudo('/bin/rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
+        sudo("echo 'uninstall unichain over'")
+
 
 # 彻底卸载
 @task
