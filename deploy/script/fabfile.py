@@ -929,7 +929,7 @@ def detect_unichain_api(service_name=None):
         server_url = str(unichain_dict["server"]["bind"])
         api_endpoint = str(unichain_dict["api_endpoint"])
         if server_url.startswith("0.0.0.0"):
-            api_url = api_endpoint.replace("/api/v1", "")
+            api_url = api_endpoint.replace("/uniledger/v1", "")
             api_detect_res = run('curl -i %s 2>/dev/null|head -1|grep "200 OK"' % (api_url))
             if not api_detect_res:
                 print("[ERROR]=====api[%s] detect result: is not requested!!!" % (api_url))
@@ -1147,6 +1147,12 @@ def purge_uninstall(service_name=None, setup_name=None):
         if count_unichain_files != "0":
             sudo('{} `find ~/{}* -type f 2>/dev/null`'.format(cmd_destroy, service_name))
         sudo('/bin/rm -rf ~/{} 2>/dev/null'.format(service_name))
+
+        # purge del logs
+        count_unichain_logs = sudo("find ~/{}_log -type f|wc -l".format(service_name))
+        if count_unichain_logs != "0":
+            sudo('{} `find ~/{}_log -type f 2>/dev/null`'.format(cmd_destroy, service_name))
+        sudo('/bin/rm -rf ~/{}_log 2>/dev/null'.format(service_name))
 
         # purge del data
         sudo('/bin/rm -rf /data/rethinkdb 2>/dev/null')
