@@ -1,38 +1,65 @@
 # Deploy for unichain
 
-## app 配置
+
+## unichain 配置文件
 ```
-app 配置文件位置 deploy/conf/__init__.py
+配置文件位置 deploy/conf/__init__.py
 
-_app_config
+默认值，如下：
+server_port: 9984,
+restore_server_port: 9986,
+service_name: 'unichain',
+setup_name: 'UnichainDB',
+db_name:'bigchain'
 
-可以修改部署的程序 服务名、端口、安装名
+```
+## 操作说明
+
+### 1. 控制机环境
+`Python3.4+`, `Fabric3`, `git`, `ssh`
+
+### 2. 下载部署项目
+```
+git clone https://git.oschina.net/wxcsdb88/unichain_deploy.git
 ```
 
-## 1. Install
+### 3. 源更新
+
+如果控制机源未修改，建议修改后再操作，源配置文件参考 /sources/ 下 `sources.list` `pip.conf`
+
+或者执行 `fab local_update_apt_pip`
+
+### 4. 下载unichain
 ```
-控制机需要安装Fabric3
+cd unichain_deploy/deploy/script/
+
+# 运行 脚本下载或更新 unichain 至 /deploy/sources/ 下
+bash unichain_init.sh
+
+# 生成 unichain-archive.tar.gz 并拷贝至 /sources/ 下
+```
+最终 sources/下文件及目录如下：
+`unichain-archive.tar.gz` `unichain` `unichain.conf.template` `sources.list` `pip.conf` ...
+
+### 5. 更新unichain
+```
+bash unichain_init.sh update
 ```
 
-## 2. 更新节点源配置
+### 6. 集群安装 unichain
+```
+#配置节点信息
+vi conf/blockchain_nodes
 
-源配置在`deploy/sources`下，apt配置为`sources.list`, pip配置为`pip.conf`
+bash run_first_setup.sh
 
-## 3. 检查应用基本配置模板及安装包
+```
 
-- 检测配置模板文件 `deploy/conf/template/unichain.conf.template` 是否存在
-- 检测程序安装包文件 `deploy/sources/unichain-archive.tar.gz` 是否存在
+### 7. 集群更新 unichain
+```
+bash run_update.sh
+```
 
-## 4. 安装或更新操作
-在执行安装或更新操作前，请务必先执行获取模板及安装包的操作！
-
-代码下载或更新 `unichain_init.sh`
-
-节点安装
-run_first_setup.sh
-
-节点更新
-run_update.sh
 
 
 
