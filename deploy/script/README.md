@@ -3,6 +3,9 @@
 ## app 配置
 ```
 app 配置文件位置 deploy/conf/__init__.py
+
+_app_config
+
 ```
 
 ## 1. Install

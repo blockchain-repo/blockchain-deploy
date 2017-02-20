@@ -16,6 +16,7 @@ from fabric.contrib.files import sed
 from fabric.operations import run, put, get
 from fabric.context_managers import settings
 
+import time
 import json
 
 from hostlist import public_dns_names,public_hosts,public_pwds,public_host_pwds
@@ -332,8 +333,6 @@ def install_unichain_from_git_archive(service_name=None):
     run('tar zxf unichain-archive.tar.gz -C {} >/dev/null 2>&1'.format(service_name))
     sudo('pip3 install -i https://pypi.doubanio.com/simple --upgrade setuptools')
     # must install dependency first!
-    install_dependency()
-
     with cd('./{}'.format(service_name)):
         sudo('python3 setup.py install')
         # sudo('pip3 install .')
@@ -389,6 +388,7 @@ def uninstall_unichain(service_name=None, setup_name=None, only_code=True):
     with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
+        if not setup_name:
             setup_name = _setup_name
         run('echo "[INFO]==========uninstall {}-pro=========="'.format(service_name))
         stop_unichain()
@@ -551,6 +551,7 @@ def start_unichain(service_name=None):
         if not service_name:
             service_name = _service_name
         stop_unichain_restore()
+
         sudo('screen -d -m {} -y start &'.format(service_name), pty=False, user=env.user)
         sudo('screen -d -m {}_api start &'.format(service_name), pty=False, user=env.user)
 
@@ -599,7 +600,20 @@ def clear_rethinkdb_data():
 @task
 def start_rethinkdb():
     sudo("service rethinkdb  start")
+    time.sleep(2)
+    check_rethinkdb_run()
 
+@task
+def check_rethinkdb_run():
+    while(True):
+        process_count = sudo(" ps -e|grep rethinkdb|wc -l")
+        rethinkdb_start = process_count != "0"
+        if rethinkdb_start:
+            sudo("echo rethinkdb nodes {} run".format(env.host))
+            break
+        else:
+            sudo("echo rethinkdb nodes {} not run, will restart!".format(env.host))
+            start_rethinkdb()
 
 @task
 def stop_rethinkdb():

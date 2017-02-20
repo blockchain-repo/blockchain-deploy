@@ -105,7 +105,7 @@ for i, filename in enumerate(conf_files):
         conf_dict['server']['bind'] = '0.0.0.0:{}'.format(app_config['server_port'])
         # Set the api_endpoint
         conf_dict['api_endpoint'] = 'http://' + public_hosts[i] + \
-                                    ':{}/api/v1'.format(app_config['server_port'])
+                                    ':{}/uniledger/v1'.format(app_config['server_port'])
         # Set Statsd host
         conf_dict['statsd']['host'] = gMonitorServer
 
@@ -113,7 +113,7 @@ for i, filename in enumerate(conf_files):
         conf_dict['restore_server']['bind'] = '0.0.0.0:{}'.format(app_config['restore_server_port'])
         conf_dict['restore_server']['compress'] = True
         conf_dict['restore_endpoint'] = 'http://' + public_hosts[i] +\
-                                        ':{}/api/v1/collect'.format(app_config['restore_server_port'])
+                                        ':{}/uniledger/v1/collect'.format(app_config['restore_server_port'])
 
         # multi apps configure
         conf_dict['app']['service_name'] = '{}'.format(app_config['service_name'])
