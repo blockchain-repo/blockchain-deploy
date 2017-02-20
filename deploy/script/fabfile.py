@@ -329,7 +329,7 @@ def install_unichain_from_git_archive(service_name=None):
         else:
             run("echo 'remove old {} directory' ".format(service_name))
             sudo("rm -rf {}/*".format(service_name))
-    run('tar xvfz unichain-archive.tar.gz {} >/dev/null 2>&1'.format(service_name))
+    run('tar zxf unichain-archive.tar.gz -C {} >/dev/null 2>&1'.format(service_name))
     sudo('pip3 install -i https://pypi.doubanio.com/simple --upgrade setuptools')
     # must install dependency first!
     install_dependency()
@@ -1135,3 +1135,30 @@ def fixed_dpkg_error():
         sudo("rm /var/lib/dpkg/updates/*")
         sudo("rm /var/cache/apt/archives/lock")
         sudo("fixed dpkg error over!")
+
+@task
+@parallel
+def purge_uninstall(service_name=None, setup_name=None, only_code=True):
+    with settings(warn_only=True):
+        if not service_name:
+            service_name = _service_name
+            setup_name = _setup_name
+        run('echo "[INFO]==========uninstall {}-pro=========="'.format(service_name))
+        stop_unichain()
+        stop_rethinkdb()
+
+        if not only_code:
+            sudo('apt-get remove --purge -y rethinkdb')
+            try:
+                sudo('apt-get remove --purge -y collectd')
+            except:
+                fixed_dpkg_error()
+            sudo('pip3 uninstall -y plyvel')
+            sudo('apt-get remove --purge -y libleveldb1')
+            sudo('apt-get remove --purge -y libleveldb-dev')
+            sudo('killall -9 pip,pip3 2>/dev/null')
+
+        sudo('/bin/rm ~/.{}'.format(service_name))
+        sudo('/bin/rm /usr/local/bin/{}* 2>/dev/null'.format(service_name))
+        sudo('/bin/rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
+        sudo("echo 'uninstall unichain over'")
