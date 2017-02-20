@@ -1148,6 +1148,10 @@ def purge_uninstall(service_name=None, setup_name=None):
             sudo('{} `find ~/{}* -type f 2>/dev/null`'.format(cmd_destroy, service_name))
         sudo('/bin/rm -rf ~/{} 2>/dev/null'.format(service_name))
 
+        # purge del data
+        sudo('/bin/rm -rf /data/rethinkdb 2>/dev/null')
+        sudo('/bin/rm -rf /data/localdb_{} 2>/dev/null'.format(service_name))
+
         sudo('pip3 uninstall -y plyvel')
         sudo('apt-get remove --purge -y libleveldb1')
         sudo('apt-get remove --purge -y libleveldb-dev')
