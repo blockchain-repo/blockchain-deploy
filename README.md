@@ -20,6 +20,7 @@ Options:
     stop_node       stop  signal cluster node, params same as stop_node.sh
     install_node    install single cluster node
     uninstall       uninstall cluster node
+    unichain_init   update or downnload the unichain
 ```
 
 ## 文件说明

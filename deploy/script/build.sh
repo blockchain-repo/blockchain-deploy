@@ -41,6 +41,7 @@ Options:
     stop_node    stop  signal cluster node
     install_node install or reinstall single cluster node
     uninstall    uninstall unichain
+    unichain_init   update or downnload the unichain
     "
     return 0
 }
