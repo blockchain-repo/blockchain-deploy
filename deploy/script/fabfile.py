@@ -520,7 +520,6 @@ def start_unichain(service_name=None):
         if not service_name:
             service_name = _service_name
         stop_unichain_restore()
-
         sudo('screen -d -m {} -y start &'.format(service_name), pty=False, user=env.user)
         sudo('screen -d -m {}_api start &'.format(service_name), pty=False, user=env.user)
 
@@ -534,7 +533,6 @@ def stop_unichain(service_name=None):
         # sudo("kill `ps -ef|grep unichain | grep -v grep|awk '{print $2}'` ")
         sudo("killall -9 {}_api 2>/dev/null".format(service_name))
         sudo("killall -9 {} 2>/dev/null".format(service_name))
-
 
 @task
 @parallel
@@ -675,7 +673,7 @@ def count_process_by_name(name):
     with settings(warn_only=True):
         if name is not None:
             user = env.user
-            cmd = "echo '{}`s {} process counts is ' `ps -e |grep {} | wc -l`".format(user,name,name)
+            cmd = "echo '{}`s {} process counts is ' `ps -ef |grep {} | wc -l`".format(user,name,name)
             sudo("echo {}".format(cmd) )
             sudo(cmd)
 
