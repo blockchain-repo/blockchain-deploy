@@ -429,15 +429,18 @@ def uninstall_unichain(service_name=None, setup_name=None, only_code=True):
 # task run on only one node. See http://tinyurl.com/h9qqf3t )
 @task
 @hosts(public_dns_names[0])
-def init_unichain(service_name=None):
+def init_unichain(service_name=None, set_shards=False, set_replicas=False):
     with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
+        stop_unichain()
+        check_unichain()
         run('{} -y drop'.format(service_name),pty=False)
         run('{} init'.format(service_name), pty=False)
-        # set_shards()
-        # set_replicas()
-
+        if set_shards:
+            set_shards()
+        if set_replicas:
+            set_replicas()
 
 # Configure BigchainDB
 @task
