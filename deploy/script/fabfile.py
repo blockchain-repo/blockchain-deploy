@@ -180,7 +180,8 @@ def install_base_software():
     # python pip3 :
     with settings(warn_only=True):
         # update the nodes apt and pip sources
-        update_apt_pip()
+        # update_apt_pip()
+
         # This deletes the dir where "apt-get update" stores the list of packages
         sudo('rm -rf /var/lib/apt/lists/')
         # Re-create that directory, and its subdirectory named "partial"
@@ -317,11 +318,21 @@ def send_confile(confile, service_name=None):
 # named unichain-archive.tar.gz
 @task
 @parallel
-def install_unichain_from_git_archive(service_name=None):
+def install_unichain_from_git_archive(service_name=None, setup_name=None):
     if not service_name:
         service_name = _service_name
+    if not setup_name:
+        setup_name = _setup_name
+
     put('unichain-archive.tar.gz')
     user_group = env.user
+
+    # remail the config file .unichain
+    # sudo('/bin/rm ~/.{}'.format(service_name))
+
+    sudo('/bin/rm -f /usr/local/bin/{}* 2>/dev/null'.format(service_name))
+    sudo('/bin/rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
+
     with settings(warn_only=True):
         if run("test -d {}".format(service_name)).failed:
             run("echo 'create {} directory' ".format(service_name))
@@ -329,7 +340,7 @@ def install_unichain_from_git_archive(service_name=None):
             #sudo("chown -R " + user_group + ':' + user_group + ' ~/')
         else:
             run("echo 'remove old {} directory' ".format(service_name))
-            sudo("rm -rf {}/*".format(service_name))
+            sudo("/bin/rm -rf {}/*".format(service_name))
     run('tar zxf unichain-archive.tar.gz -C {} >/dev/null 2>&1'.format(service_name))
     sudo('pip3 install -i https://pypi.doubanio.com/simple --upgrade setuptools')
     # must install dependency first!
