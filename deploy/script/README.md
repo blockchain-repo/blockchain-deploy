@@ -34,7 +34,7 @@ git clone https://git.oschina.net/wxcsdb88/unichain_deploy.git
 cd unichain_deploy/deploy/script/
 
 # 运行 脚本下载或更新 unichain 至 /deploy/sources/ 下
-bash unichain_init.sh
+bash build.sh unichain_init [download|update|noupdate]
 
 # 生成 unichain-archive.tar.gz 并拷贝至 /sources/ 下
 ```
@@ -43,7 +43,7 @@ bash unichain_init.sh
 
 ### 5. 更新unichain
 ```
-bash unichain_init.sh update
+bash build.sh unichain_init update
 ```
 
 ### 6. 集群安装 unichain
@@ -51,13 +51,13 @@ bash unichain_init.sh update
 #配置节点信息
 vi conf/blockchain_nodes
 
-bash run_first_setup.sh
+bash build.sh first_setup
 
 ```
 
 ### 7. 集群更新 unichain
 ```
-bash run_update.sh
+bash build.sh update
 ```
 
 
