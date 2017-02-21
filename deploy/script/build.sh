@@ -93,7 +93,6 @@ case $1 in
     uninstall)
         ./run_uninstall.sh | tee ../log/uninstall.log
     ;;
-    *)
     unichain_init)
          str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./unichain_init.sh $str_param | tee ../log/unichain_init.log

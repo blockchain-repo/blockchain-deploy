@@ -1109,7 +1109,7 @@ def fixed_dpkg_error():
 # 彻底卸载
 @task
 @parallel
-def purge_uninstall(service_name=None, setup_name=None):
+def purge_uninstall(service_name=None, setup_name=None, only_code=False):
     with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
@@ -1160,10 +1160,11 @@ def purge_uninstall(service_name=None, setup_name=None):
         sudo('/bin/rm -rf /data/rethinkdb 2>/dev/null')
         sudo('/bin/rm -rf /data/localdb_{} 2>/dev/null'.format(service_name))
 
-        sudo('pip3 uninstall -y plyvel')
-        sudo('apt-get remove --purge -y libleveldb1')
-        sudo('apt-get remove --purge -y libleveldb-dev')
-        sudo('apt-get remove --purge -y rethinkdb')
+        if not only_code:
+            sudo('pip3 uninstall -y plyvel')
+            sudo('apt-get remove --purge -y libleveldb1')
+            sudo('apt-get remove --purge -y libleveldb-dev')
+            sudo('apt-get remove --purge -y rethinkdb')
 
         # try:
         #     sudo('dpkg --purge collectd')
