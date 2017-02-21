@@ -23,25 +23,28 @@ Options:
     first_setup  \$1: nostart, if set \$1,it cann't start nodes after setup
                  first setup:
                     sence: first setup use
-                    op: a.install base tools|depends libs|rethinkdb|bigchaindb|unichain
-                        b.configure rethinkdb|bigchaindb|unichain
-                        c.start cluster nodes server
+                    op:    a.install base tools|depends libs|rethinkdb|bigchaindb|unichain
+                           b.configure rethinkdb|bigchaindb|unichain
+                           c.start cluster nodes server
     update       \$1: nostart, if set \$1,it cann't start nodes after update
-                 update setup:
-                    sence: a. when unichain pro  is updated
-                           b. when unichain conf is updated
-                           c. when update fail, need rollback
-                    op: a.update unichain
-                        b.reconfigure rethinkdb|bigchaindb|unichain
-                        c.restart cluster nodes server
-    server_check after setup, check servers in cluster nodes are running
-    start_all    start all cluster nodes
-    stop_all     stop  sll cluster nodes
-    start_node   start signal cluster node 
-    stop_node    stop  signal cluster node
-    install_node install or reinstall single cluster node
-    uninstall    uninstall unichain
-    unichain_init   update or downnload the unichain
+                    update setup:
+                         sence: a. when unichain pro  is updated
+                                b. when unichain conf is updated
+                                c. when update fail, need rollback
+                         op:    a.update unichain
+                                b.reconfigure rethinkdb|bigchaindb|unichain
+                                c.restart cluster nodes server
+    server_check     after setup, check servers in cluster nodes are running
+    start_all        start all cluster nodes
+    stop_all         stop  sll cluster nodes
+    start_node       start signal cluster node
+    stop_node        stop  signal cluster node
+    install_node     install or reinstall single cluster node
+    uninstall        uninstall unichain
+    unichain_init    update or downnload the unichain
+                     \$1: download, if set \$1, it can download the unichain
+                     \$1: update,   if set \$1, it can update the unichain code
+                     \$1: noupdate, if set \$1, it only generate the unichain tar.gz
     "
     return 0
 }
@@ -89,6 +92,11 @@ case $1 in
     ;;
     uninstall)
         ./run_uninstall.sh | tee ../log/uninstall.log
+    ;;
+    *)
+    unichain_init)
+         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
+        ./unichain_init.sh $str_param | tee ../log/unichain_init.log
     ;;
     *)
         usage

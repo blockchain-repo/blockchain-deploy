@@ -480,6 +480,8 @@ def start_unichain_restore(service_name=None):
     with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
+        stop_unichain()
+        start_rethinkdb()
         sudo('screen -d -m {}_restore -y start &'.format(service_name), pty=False, user=env.user)
 
 @task
