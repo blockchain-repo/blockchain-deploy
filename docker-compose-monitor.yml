@@ -14,6 +14,7 @@ services:
       COLLECTD_BINDING: ':25826'
     volumes:
       - $INFLUXDB_DATA:/data
+#      - $INIT_SCRIPT:/init_script.influxql:ro
       - $INIT_SCRIPT:/init_script.influxql:ro
 
   grafana:
