@@ -428,8 +428,8 @@ def uninstall_unichain(service_name=None, setup_name=None, only_code=True):
 # (The @hosts decorator is used to make this
 # task run on only one node. See http://tinyurl.com/h9qqf3t )
 @task
-@hosts(public_dns_names[0])
-def init_unichain(service_name=None, set_shards=False, set_replicas=False):
+@runs_once
+def init_unichain(service_name=None, shards=False, replicas=False):
     with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
@@ -437,10 +437,40 @@ def init_unichain(service_name=None, set_shards=False, set_replicas=False):
         check_unichain()
         run('{} -y drop'.format(service_name),pty=False)
         run('{} init'.format(service_name), pty=False)
-        if set_shards:
+        if shards:
             set_shards()
-        if set_replicas:
+        if replicas:
             set_replicas()
+
+@task
+@parallel
+def test_localdb_model_delete(service_name=None):
+    with settings(warn_only=True):
+        if not service_name:
+            service_name = _service_name
+        sudo('mkdir -p /data/backup_localdb_{}'.format(service_name), pty=False)
+        sudo("echo delete localdb backup files in node {}".format(env.host))
+        sudo("mv /data/localdb_{}/* /data/backup_localdb_{}".format(service_name, service_name))
+        sudo("echo delete localdb backup files in node {} over".format(env.host))
+
+@task
+@parallel
+def test_localdb_model_download(service_name=None):
+    with settings(warn_only=True):
+        if not service_name:
+            service_name = _service_name
+        sudo("echo download localdb backup files to node {}".format(env.host))
+        sudo("mv /data/backup_localdb_{}/* /data/localdb_{}".format(service_name, service_name))
+        sudo("echo download localdb backup files to node {} over".format(env.host))
+
+@task
+@parallel
+def test_localdb_model_files(service_name=None, path="/data/localdb_{}".format(_service_name)):
+    with settings(warn_only=True):
+        if not service_name:
+            service_name = _service_name
+        sudo("echo files in node {}".format(env.host))
+        sudo("ls {}".format(path))
 
 # Configure BigchainDB
 @task

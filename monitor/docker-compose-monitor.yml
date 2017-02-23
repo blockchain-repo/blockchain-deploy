@@ -30,7 +30,7 @@ services:
       # - /grafana/custom.ini:/usr/share/grafana/conf/custom.ini
 
   statsd:
-    image: bigchaindb/docker-telegraf-statsd
+    image: futurever/docker-telegraf-statsd
     ports:
       - "8125:8125/udp"
     environment:
