@@ -14,7 +14,6 @@ services:
       COLLECTD_BINDING: ':25826'
     volumes:
       - $INFLUXDB_DATA:/data
-#      - $INIT_SCRIPT:/init_script.influxql:ro
       - $INIT_SCRIPT:/init_script.influxql:ro
 
   grafana:
@@ -26,9 +25,7 @@ services:
     environment:
       INFLUXDB_HOST: "influxdb"
     volumes:
-      # - /grafana/grafana.ini:/etc/grafana/grafana.ini
       - /grafana/defaults.ini:/usr/share/grafana/conf/defaults.ini
-      # - /grafana/custom.ini:/usr/share/grafana/conf/custom.ini
 
   statsd:
     image: futurever/docker-telegraf-statsd

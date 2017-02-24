@@ -11,5 +11,14 @@ pip3 install -U docker-compose==1.8.0
 # curl -L "https://github.com/docker/compose/releases/download/1.8.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
+# cp the default config for grafana-unichian-docker to /grafana/
+mkdir -p /grafana
+grafana_docker_config_files=../../grafana-unichain-docker/defaults.ini
+grafana_default_config_files=/grafana/defaults.ini
+
+if [ ! -f ${grafana_default_config_files} ]; then
+    cp -f grafana_docker_config_files ${grafana_default_config_files}
+fi
+
 INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../../docker-compose-monitor.yml up
 # INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../../docker-compose-monitor-dev.yml up
