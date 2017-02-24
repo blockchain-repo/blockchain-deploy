@@ -19,6 +19,9 @@ COPY ./run.sh /run.sh
 
 COPY ./bigchaindb_dashboard.js /usr/share/grafana/public/dashboards/
 
+# copy defaults.ini into container
+COPY ./defaults.ini /usr/share/grafana/conf/defaults.ini
+
 ENV INFLUXDB_HOST **None**
 
 ENTRYPOINT ["/run.sh"]
