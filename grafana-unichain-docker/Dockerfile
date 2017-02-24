@@ -17,6 +17,8 @@ VOLUME ["/var/lib/grafana", "/var/log/grafana", "/etc/grafana" ]
 
 COPY ./run.sh /run.sh
 
+RUN chmod 755 /run.sh
+
 COPY ./bigchaindb_dashboard.js /usr/share/grafana/public/dashboards/
 
 # copy defaults.ini into container
