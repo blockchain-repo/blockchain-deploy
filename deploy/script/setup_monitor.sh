@@ -17,7 +17,7 @@ grafana_docker_config_files=../../grafana-unichain-docker/defaults.ini
 grafana_default_config_files=/grafana/defaults.ini
 
 if [ ! -f ${grafana_default_config_files} ]; then
-    cp -f grafana_docker_config_files ${grafana_default_config_files}
+    cp -f ${grafana_docker_config_files} ${grafana_default_config_files}
 fi
 
 INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../../docker-compose-monitor.yml up
