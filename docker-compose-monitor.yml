@@ -26,6 +26,7 @@ services:
       INFLUXDB_HOST: "influxdb"
     volumes:
       - /grafana/defaults.ini:/usr/share/grafana/conf/defaults.ini
+      - /grafana/home.json:/usr/share/grafana/public/dashboards/home.json
 
   statsd:
     image: futurever/docker-telegraf-statsd
