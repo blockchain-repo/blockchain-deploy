@@ -1214,3 +1214,54 @@ def purge_uninstall(service_name=None, setup_name=None, only_code=False):
         #     fixed_dpkg_error()
         #     sudo('dpkg --purge collectd')
         # sudo("echo 'uninstall ls over'")
+
+# 彻底卸载
+@task
+@parallel
+def purge_delete_files(path_name=None, times=3):
+    with settings(warn_only=True):
+        if not path_name:
+            return
+
+        # shred delete files
+        if not times:
+            times = 3;
+        cmd_destroy = "shred -fuz -n {} -v ".format(times)
+
+        run('echo "[INFO]==========uninstall {}=========="'.format(path_name))
+        count_conf = sudo("find ~/{} -type f|wc -l".format(path_name))
+        time.sleep(6)
+        if count_conf != "0":
+            sudo('{} `find ~/{} -type f 2>/dev/null`'.format(cmd_destroy, path_name))
+        sudo('/bin/rm -rf ~/{}'.format(path_name))
+
+@task
+def create_user_group(username=None, pwd=None, group=None):
+    with settings(warn_only=True):
+        if not username:
+            username = "work"
+        if not pwd:
+            pwd = "unichain#123"
+        sudo("adduser {} -p {}".format(username, pwd))
+
+@task
+def add_user_to_sudo(username=None):
+    with settings(warn_only=True):
+        sudo("sed -i /^{}.*ALL=/d /etc/sudoers".format(username))
+        sudo('sed -i /^root.*ALL=/a\\"{}    ALL=(ALL:ALL) ALL" /etc/sudoers'.format(username))
+
+@task
+def remove_user_from_sudo(username=None):
+    with settings(warn_only=True):
+        if not username:
+            username = "work"
+        sudo("sed -i /^{}.*ALL=/d /etc/sudoers".format(username))
+
+
+@task
+def delete_user_group(username=None):
+    with settings(warn_only=True):
+        if not username:
+            username = "work"
+        sudo("userdel {}".format(username))
+
