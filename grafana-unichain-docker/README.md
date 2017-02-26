@@ -1,3 +1,24 @@
 # Grafana Docker image
 
-This project builds a Docker image with the latest master build of Grafana, with custom BigchainDB dashboard. From [the official grafana-docker container](https://github.com/grafana/grafana-docker).
+## Env
+```
+sudo apt-get install python3-pip
+```
+
+## Install
+```
+sudo bash setu_up.sh
+```
+
+## added the docker volumes files
+
+- 1. added the files to docker dir
+
+- 2. modify the set_up.sh and added the ops
+
+- 3. added the statement in docker-compose-monitor.yml
+
+## start
+```
+INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../docker-compose-monitor.yml up
+```

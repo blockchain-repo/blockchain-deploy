@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # The set -e option instructs bash to immediately exit
 # if any command has a non-zero exit status
@@ -24,7 +24,7 @@ UNICHAIN_NAME=unichain
 UNICHAIN_TAG=dev
 
 #部署安装包名称
-filename_deploy_app_tar_gz="unichain_deploy.tar.gz"
+filename_deploy_app_tar_gz="unichain-deploy.tar.gz"
 
 # sources 下文件
 filename_templeate_conf="unichain.conf.template"
@@ -61,6 +61,11 @@ rm -f  ${filename_app_tar_gz}
 
 cd ${UNICHAIN_NAME}
 git archive $UNICHAIN_TAG --format=tar | gzip > ${filename_app_tar_gz}
+
+# local compress and tar
+# tar -cf unichain-archive.tar *
+# gzip unichain-archive.tar
+
 cp  ${filename_app_tar_gz} ..
 
 cd ../../
@@ -96,17 +101,17 @@ cp sources/${filename_templeate_conf} conf/template/
 
 # 5. 打包部署程序及安装文件
 
-#tar -zcvf ${dir_deploy_app}/${filename_deploy_app_tar_gz} ${UNICHAIN_DEPLOY_NAME}/*
+#tar -zcvf ${dir_deploy_app}/${filename-deploy_app_tar_gz} ${UNICHAIN_DEPLOY_NAME}/*
 #latest_time=`date --date='0 days ago' +"%Y-%m-%d %H:%M:%S"`
-##bak_app_name=`date --date='0 days ago' +"%Y%m%d%H%M%S"`_${filename_deploy_app_tar_gz}
-#bak_app_name=`date --date='0 days ago' +"%Y%m%d%H%M%S"`_${UNICHAIN_DEPLOY_TAG}_${filename_deploy_app_tar_gz}
+##bak_app_name=`date --date='0 days ago' +"%Y%m%d%H%M%S"`_${deploy_app_tar_gz}
+#bak_app_name=`date --date='0 days ago' +"%Y%m%d%H%M%S"`_${UNICHAIN_DEPLOY_TAG}_${deploy_app_tar_gz}
 #
-#cp ${dir_deploy_app}/${filename_deploy_app_tar_gz} ${dir_deploy_app}/${bak_app_name}
+#cp ${dir_deploy_app}/${deploy_app_tar_gz} ${dir_deploy_app}/${bak_app_name}
 #
 #echo -e "最近更新时间:${latest_time}\n部署程序地址:${UNICHAIN_DEPLOY_URL}\n分支或标记:${UNICHAIN_DEPLOY_TAG}\n\
 #压缩包:${bak_app_name}\n" >>record.txt
 #
-#echo -e "部署包 ${filename_deploy_app_tar_gz} 已生成!\n"
+#echo -e "部署包 ${deploy_app_tar_gz} 已生成!\n"
 
 echo -e "地址：${UNICHAIN_URL}, 分支或标记: ${UNICHAIN_TAG}"
 echo -e "执行结束!"
