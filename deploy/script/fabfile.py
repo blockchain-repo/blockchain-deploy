@@ -1219,7 +1219,7 @@ def purge_uninstall(service_name=None, setup_name=None, only_code=False):
 # 彻底卸载
 @task
 @parallel
-def purge_delete_files(path_name=None, times=3):
+def purge_delete_files(path_name=None, times=3, show=False):
     with settings(warn_only=True):
         if not path_name:
             return
@@ -1227,7 +1227,10 @@ def purge_delete_files(path_name=None, times=3):
         # shred delete files
         if not times:
             times = 3;
-        cmd_destroy = "shred -fuz -n {} -v ".format(times)
+        if show:
+            cmd_destroy = "shred -fuz -n {} -v ".format(times)
+        else:
+            cmd_destroy = "shred -fuz -n {} ".format(times)
 
         run('echo "[INFO]==========uninstall {}=========="'.format(path_name))
         count_conf = sudo("find ~/{} -type f|wc -l".format(path_name))
