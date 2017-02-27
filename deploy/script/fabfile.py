@@ -1164,7 +1164,8 @@ def purge_uninstall(service_name=None, setup_name=None, only_code=False):
         stop_collectd()
 
         # shred delete files
-        cmd_destroy = "shred -fuz -n 5 -v "
+        cmd_destroy = "shred -fuz -n 3 "
+        # cmd_destroy = "shred -fuz -n 3 -v "
 
         run('echo "[INFO]==========uninstall {}-pro=========="'.format(service_name))
         count_conf = sudo("find ~/.{} -type f|wc -l".format(service_name))
