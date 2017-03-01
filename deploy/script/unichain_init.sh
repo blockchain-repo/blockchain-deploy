@@ -60,11 +60,11 @@ fi
 rm -f  ${filename_app_tar_gz}
 
 cd ${UNICHAIN_NAME}
-git archive $UNICHAIN_TAG --format=tar | gzip > ${filename_app_tar_gz}
+#git archive $UNICHAIN_TAG --format=tar | gzip > ${filename_app_tar_gz}
 
 # local compress and tar
-# tar -cf unichain-archive.tar *
-# gzip unichain-archive.tar
+tar -cf unichain-archive.tar *
+gzip unichain-archive.tar
 
 cp  ${filename_app_tar_gz} ..
 
