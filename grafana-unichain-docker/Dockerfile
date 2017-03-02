@@ -14,8 +14,15 @@ RUN echo "deb http://mirrors.163.com/ubuntu trusty main universe\n" > /etc/apt/s
 
 VOLUME ["/var/lib/grafana", "/var/log/grafana", "/etc/grafana" ]
 
+EXPOSE 3000
 
 COPY ./run.sh /run.sh
+
+RUN mkdir -p /var/lib/grafana/dashboards
+
+COPY ./grafana_json/uni-ledger-business-1487900790298.json /var/lib/grafana/dashboards/uni-ledger-business-1487900790298.json
+COPY ./grafana_json/uni-ledger-hardware1-1487900769647.json /var/lib/grafana/dashboards/uni-ledger-hardware1-1487900769647.json
+COPY ./grafana_json/uni-ledger-hardware2-1487900779941.json /var/lib/grafana/dashboards/uni-ledger-hardware2-1487900779941.json
 
 RUN chmod 755 /run.sh
 

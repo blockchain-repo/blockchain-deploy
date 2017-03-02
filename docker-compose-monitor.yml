@@ -19,6 +19,7 @@ services:
   grafana:
     # image: bigchaindb/grafana-bigchaindb-docker
     # tty: true
+    image: unichain_grafana
     build: ./grafana-unichain-docker
     ports:
       - "30:3000"
