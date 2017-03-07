@@ -4,115 +4,202 @@
 # if any command has a non-zero exit status
 set -e
 
-# noupdate 0 update 1 download 2
-if [[ $# -eq 1 && $1 == "noupdate" ]]; then
-    UPDATE_FLAG=0
-elif [[ $# -eq 1 && $1 == "update" ]]; then
-    UPDATE_FLAG=1
-elif [[ $# -eq 1 && $1 == "download" ]]; then
-    UPDATE_FLAG=2
-else
-    UPDATE_FLAG=0
-fi
+CUR_PATH=$(cd "$(dirname "$0")"; pwd)
 
-CUR_INSTALL_PATH=$(cd "$(dirname "$0")"; pwd)
+function usage()
+{
+    echo_green "
+Usage:
+    $0 [-g -b branch_name -s https://xxx.com -udp]
+Options:
+    -h  usage help
+    -g  use git update and pack the code
+    -b  the branch of the git repo, default dev
+    -s  the url of the code repo
+    -u  update the code, if choose g will use git pull
+    -p  pack the code
+    -d  delete the code and unichain-archive.tar.gz
+    "
+    return 0
+}
 
-# git仓库地址
-UNICHAIN_URL=https://git.oschina.net/uni-ledger/unichain.git
-UNICHAIN_NAME=unichain
-# 分之或者tag名
-UNICHAIN_TAG=dev
-
-#部署安装包名称
-filename_deploy_app_tar_gz="unichain-deploy.tar.gz"
+project_name=unichain
+use_git=false
+pack_local_code=false
+git_branch="dev"
+repo_url="https://git.oschina.net/uni-ledger/unichain.git"
 
 # sources 下文件
 filename_templeate_conf="unichain.conf.template"
 filename_app_tar_gz="unichain-archive.tar.gz"
 
+function echo_green()
+{
+    local content=$@
+    echo -e "\033[1;32m${content}\033[0m"
+    return 0
+}
 
-# 1. 检测项目是否存在
-cd ../sources/
-if [ ! -d ${UNICHAIN_NAME} ]; then
-   # 程序不存在,则需要新下载!
-	UPDATE_FLAG=2
-	echo "${UNICHAIN_NAME} 不存在, 进入项目下载操作!"
+function echo_red()
+{
+    local content=$@
+    echo -e "\e[1;31m${content}\e[0m"
+
+    return 0
+}
+
+function check_exist()
+{
+    cd ${CUR_PATH}/../sources/
+    if [ ! -d ${project_name} ]; then
+	    unichain_exist=0
+	else
+	    unichain_exist=1
+    fi
+}
+
+function download_confiles()
+{
+    cd ${CUR_PATH}/../sources/
+    if [ ! -f "${filename_templeate_conf}" ]; then
+        echo_red "下载缺少的文件 ${filename_templeate_conf} !"
+        wget -P . http://ojarf7dqy.bkt.clouddn.com/unichain.conf.template
+    fi
+    return 0
+}
+
+function download_code()
+{
+    echo -e "即将从仓库 ${repo_url}\n下载分支为 ${git_branch} 的代码至目录 ${project_name} 中!"
+    cd ${CUR_PATH}/../sources/
+    git clone ${repo_url} ${project_name} -b ${git_branch}
+    return 0
+}
+
+function delete_code()
+{
+    cd ${CUR_PATH}/../sources/
+    rm -f  ${filename_app_tar_gz}
+    rm -rf ${project_name}
+    return 0
+}
+
+#only choose git can update the code use the repo
+function update_code()
+{
+    cd ${CUR_PATH}/../sources/${project_name}/
+    if [ "${1}" == true ]; then
+        echo_red "使用git更新代码，地址:${repo_url}, 分支: ${git_branch}"
+        git pull origin
+        #git pull origin ${git_branch}
+    else
+        echo_red "请添加参数g，使用git进行代码更新！"
+    fi
+    return 0
+}
+
+function pack_code()
+{
+    cd ${CUR_PATH}/../sources/${project_name}/
+
+    rm -f ${filename_app_tar_gz}
+    if [ "${1}" == true ]; then
+        echo_red "使用 git archive 打包本地代码并生成 ${filename_app_tar_gz}"
+        git archive ${git_branch} --format=tar | gzip > ${filename_app_tar_gz}
+    else
+        echo_red "使用 tar & gzip 打包本地代码并生成 ${filename_app_tar_gz}"
+        tar -cf unichain-archive.tar *
+        gzip -f unichain-archive.tar
+        #gzip unichain-archive.tar
+    fi
+    cp  ${filename_app_tar_gz} ..
+    return 0
+}
+
+function main() {
+    local OPTIND
+    while getopts gb:s:upd OPT; do
+       case $OPT in
+          g)
+            use_git=true
+            ;;
+          b)
+            git_branch=$OPTARG
+            ;;
+          s)
+            repo_url=$OPTARG
+            ;;
+          u)
+            update_local_code=true     # update the unichain code
+            ;;
+          p)
+            pack_local_code=true       # pack the unichain code
+            ;;
+          d)
+            delete_local_code=true     # delete the unichain code and unichain-archive.tar.gz
+            ;;
+          h)
+            usage
+            exit 0
+            ;;
+          \?)
+            usage
+            exit 1
+            ;;
+          *)
+            usage
+            exit 1
+            ;;
+       esac
+    done
+}
+
+main $@
+
+download_confiles
+
+if [ "${delete_local_code}" == true ]; then
+    # check the unichain is exist
+    check_exist
+
+    #echo -e "Will delete the local unichain code and the unichain-archive.tar.gz."
+    if [ ${unichain_exist} == 1 ]; then
+        #echo -e "exist unichain and will delete it"
+        echo_red "删除已存在的unichain代码"
+        delete_code
+    #else
+    #   echo -e "not exist unichain"
+    fi
+
 fi
 
-# 2. 操作项目
-if [ ${UPDATE_FLAG} -eq 0 ]; then
-    echo "项目存在,不更新!"
-elif [ ${UPDATE_FLAG} -eq 1 ]; then
-    echo "项目存在,即将更新!"
-	echo -e "地址：${UNICHAIN_URL}, 分支或标记: ${UNICHAIN_TAG}"
-	git pull origin ${UNICHAIN_TAG}
-	echo "项目更新完成!"
-elif [ ${UPDATE_FLAG} -eq 2 ]; then
-    echo "清空程序目录"
-    rm -rf ${UNICHAIN_NAME}
-	echo "下载程序"
-	echo -e "地址：${UNICHAIN_URL}, 分支或标记: ${UNICHAIN_TAG}"
-	git clone ${UNICHAIN_URL} ${UNICHAIN_NAME} -b ${UNICHAIN_TAG}
-	echo "下载程序完成"
-fi
+if [ "${update_local_code}" == true ]; then
+    # check the unichain is exist
+    check_exist
 
-# 重新打包生成应用
-rm -f  ${filename_app_tar_gz}
-
-cd ${UNICHAIN_NAME}
-#git archive $UNICHAIN_TAG --format=tar | gzip > ${filename_app_tar_gz}
-
-# local compress and tar
-tar -cf unichain-archive.tar *
-gzip unichain-archive.tar
-
-cp  ${filename_app_tar_gz} ..
-
-cd ../../
-
-# wget -P sources http://ojarf7dqy.bkt.clouddn.com/unichain.conf.template
-
-# 3. 检测 sources目录下是否存在文件 unichain.conf.template, unichain-archive.tar.gz
-check_flag=0
-if [ ! -f "sources/${filename_templeate_conf}" ]; then
-    wget -P sources http://ojarf7dqy.bkt.clouddn.com/unichain.conf.template
-    if [ ! -f "sources/${filename_templeate_conf}" ]; then
-        echo -e "\033[31m sources/$filename_templeate_conf not exist!\033[0m"
-    #  check_flag=1
+    #echo -e "Update the local unichain code and generate the unichain-archive.tar.gz."
+    if [ ${unichain_exist} == 0 ]; then
+        #echo -e "unichain代码不存在"
+        download_code
+        pack_code ${use_git}
+    else
+        #echo -e "unichain代码已存在"
+        update_code ${use_git}
     fi
 fi
 
-if [ ! -f "sources/${filename_app_tar_gz}" ]; then
-    echo -e "\033[31m sources/${filename_app_tar_gz} not exist!\033[0m"
-    check_flag=1
+if [ "${pack_local_code}" == true ]; then
+    check_exist
+
+    #echo -e "Update the local unichain code and generate the unichain-archive.tar.gz."
+    if [ ${unichain_exist} == 0 ]; then
+        #echo -e "not exist unichain and will download it"
+        download_code
+        pack_code ${use_git}
+    else
+        pack_code ${use_git}
+    fi
+
 fi
 
-if [ ${check_flag} != 0 ]; then
-	echo "sources目录文件缺失，请检查后再操作！"
-	exit 1
-fi
-
-#git archive --format=tar.gz --remote=origin ${UNICHAIN_DEPLOY_TAG}| gzip >${filename_app_tar_gz}
-
-# 4. 复制文件
-cp sources/${filename_templeate_conf} conf/template/
-
-
-
-# 5. 打包部署程序及安装文件
-
-#tar -zcvf ${dir_deploy_app}/${filename-deploy_app_tar_gz} ${UNICHAIN_DEPLOY_NAME}/*
-#latest_time=`date --date='0 days ago' +"%Y-%m-%d %H:%M:%S"`
-##bak_app_name=`date --date='0 days ago' +"%Y%m%d%H%M%S"`_${deploy_app_tar_gz}
-#bak_app_name=`date --date='0 days ago' +"%Y%m%d%H%M%S"`_${UNICHAIN_DEPLOY_TAG}_${deploy_app_tar_gz}
-#
-#cp ${dir_deploy_app}/${deploy_app_tar_gz} ${dir_deploy_app}/${bak_app_name}
-#
-#echo -e "最近更新时间:${latest_time}\n部署程序地址:${UNICHAIN_DEPLOY_URL}\n分支或标记:${UNICHAIN_DEPLOY_TAG}\n\
-#压缩包:${bak_app_name}\n" >>record.txt
-#
-#echo -e "部署包 ${deploy_app_tar_gz} 已生成!\n"
-
-echo -e "地址：${UNICHAIN_URL}, 分支或标记: ${UNICHAIN_TAG}"
-echo -e "执行结束!"
 exit 0

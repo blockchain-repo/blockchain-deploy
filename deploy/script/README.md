@@ -20,7 +20,7 @@ db_name:'bigchain'
 
 ### 2. 下载部署项目
 ```
-git clone https://git.oschina.net/wxcsdb88/unichain_deploy.git
+git clone https://git.oschina.net/uni-ledger/unichain_deploy.git
 ```
 
 ### 3. 源更新
@@ -34,7 +34,7 @@ git clone https://git.oschina.net/wxcsdb88/unichain_deploy.git
 cd unichain_deploy/deploy/script/
 
 # 运行 脚本下载或更新 unichain 至 /deploy/sources/ 下
-bash build.sh unichain_init [download|update|noupdate]
+bash build.sh unichain_init -du
 
 # 生成 unichain-archive.tar.gz 并拷贝至 /sources/ 下
 ```
@@ -43,7 +43,7 @@ bash build.sh unichain_init [download|update|noupdate]
 
 ### 5. 更新unichain
 ```
-bash build.sh unichain_init update
+bash build.sh unichain_init -up
 ```
 
 ### 6. 集群安装 unichain
@@ -60,7 +60,19 @@ bash build.sh first_setup
 bash build.sh update
 ```
 
+### 8. unichain_init.sh 说明
+```
+Usage:
+    $0 [-g -b branch_name -s https://xxx.com -udp]
+Options:
+    -h  使用帮助
+    -g  使用git方式对代码进行更新打包
+    -b  git方式操作对应的分支
+    -s  下载代码仓库地址
+    -u  更新代码，如果不存在则使用git方式下载代码
+    -p  对代码进行打包，生成unichain-archive.tar.gz，并copy至sources下
+        如果选择git方式打包，则使用git archive, 否则默认为tar & gzip 打包
+    -d  删除下载的unichain代码及生成的unichain-archive.tar.gz文件
 
-
-
+```
 
