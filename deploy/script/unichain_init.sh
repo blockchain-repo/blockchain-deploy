@@ -19,12 +19,14 @@ Options:
     -u  update the code, if choose g will use git pull
     -p  pack the code
     -d  delete the code and unichain-archive.tar.gz
+    -t  template files re-download
     "
     return 0
 }
 
 project_name=unichain
 use_git=false
+
 pack_local_code=false
 git_branch="dev"
 repo_url="https://git.oschina.net/uni-ledger/unichain.git"
@@ -44,26 +46,51 @@ function echo_red()
 {
     local content=$@
     echo -e "\e[1;31m${content}\e[0m"
-
     return 0
 }
 
-function check_exist()
+function check_exist_dir()
 {
-    cd ${CUR_PATH}/../sources/
-    if [ ! -d ${project_name} ]; then
+    if [ -z "$1" ]; then
+        echo "目录或路径输入错误"
+        exit 1
+    fi
+
+    if [ ! -d "$1" ]; then
 	    unichain_exist=0
 	else
 	    unichain_exist=1
     fi
 }
 
-function download_confiles()
+function check_exist_file()
+{
+    if [ -z "$1" ]; then
+        echo "文件名或路径输入错误"
+        exit 1
+    fi
+
+    if [ ! -f "$1" ]; then
+	    unichain_conf_file_exist=0
+	else
+	    unichain_conf_file_exist=1
+    fi
+}
+
+# 0 not exist download, 1 exist, 2 delete and download
+function download_confile()
 {
     cd ${CUR_PATH}/../sources/
-    if [ ! -f "${filename_templeate_conf}" ]; then
-        echo_red "下载缺少的文件 ${filename_templeate_conf} !"
+    if [ "$1" == 0 ]; then
+        echo_red "下载模板文件 ${filename_templeate_conf} !"
         wget -P . http://ojarf7dqy.bkt.clouddn.com/unichain.conf.template
+        cp ${filename_templeate_conf} ${CUR_PATH}/../conf/template/
+    elif [  "$1" == 2 ]; then
+        mv "${filename_templeate_conf}" "${filename_templeate_conf}.bak"
+        rm -f "${filename_templeate_conf}"
+        echo_red "下载模板文件 ${filename_templeate_conf} !"
+        wget -P . http://ojarf7dqy.bkt.clouddn.com/unichain.conf.template
+        cp ${filename_templeate_conf} ${CUR_PATH}/../conf/template/
     fi
     return 0
 }
@@ -118,7 +145,7 @@ function pack_code()
 
 function main() {
     local OPTIND
-    while getopts gb:s:upd OPT; do
+    while getopts gb:s:updt OPT; do
        case $OPT in
           g)
             use_git=true
@@ -138,6 +165,9 @@ function main() {
           d)
             delete_local_code=true     # delete the unichain code and unichain-archive.tar.gz
             ;;
+          t)
+            re_download_template=true  # re download the unichain template
+            ;;
           h)
             usage
             exit 0
@@ -155,12 +185,12 @@ function main() {
 }
 
 main $@
-
-download_confiles
+project_dir=${CUR_PATH}/../sources/${project_name}
+path_unichain_conf_file=${CUR_PATH}/../sources/${filename_templeate_conf}
 
 if [ "${delete_local_code}" == true ]; then
     # check the unichain is exist
-    check_exist
+    check_exist_dir ${project_dir}
 
     #echo -e "Will delete the local unichain code and the unichain-archive.tar.gz."
     if [ ${unichain_exist} == 1 ]; then
@@ -175,7 +205,7 @@ fi
 
 if [ "${update_local_code}" == true ]; then
     # check the unichain is exist
-    check_exist
+    check_exist_dir ${project_dir}
 
     #echo -e "Update the local unichain code and generate the unichain-archive.tar.gz."
     if [ ${unichain_exist} == 0 ]; then
@@ -189,7 +219,7 @@ if [ "${update_local_code}" == true ]; then
 fi
 
 if [ "${pack_local_code}" == true ]; then
-    check_exist
+    check_exist_dir ${project_dir}
 
     #echo -e "Update the local unichain code and generate the unichain-archive.tar.gz."
     if [ ${unichain_exist} == 0 ]; then
@@ -200,6 +230,19 @@ if [ "${pack_local_code}" == true ]; then
         pack_code ${use_git}
     fi
 
+fi
+
+check_exist_file ${path_unichain_conf_file}
+if [ "${re_download_template}" == true ]; then
+    # if the template not exist, download
+
+    if [ ${unichain_conf_file_exist} == 0 ]; then
+        download_confile 0
+    else
+        download_confile 2
+    fi
+else
+    download_confile ${unichain_conf_file_exist}
 fi
 
 exit 0
