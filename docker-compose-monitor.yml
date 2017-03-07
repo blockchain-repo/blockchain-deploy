@@ -28,6 +28,9 @@ services:
     volumes:
       - /grafana/defaults.ini:/usr/share/grafana/conf/defaults.ini
       - /grafana/home.json:/usr/share/grafana/public/dashboards/home.json
+      - /grafana/uni-ledger-business.json:/var/lib/grafana/dashboards/uni-ledger-business.json
+      - /grafana/uni-ledger-hardware1.json:/var/lib/grafana/dashboards/uni-ledger-hardware1.json
+      - /grafana/uni-ledger-hardware1.json:/var/lib/grafana/dashboards/uni-ledger-hardware2.json
 
   statsd:
     image: futurever/docker-telegraf-statsd

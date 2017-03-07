@@ -18,11 +18,9 @@ EXPOSE 3000
 
 COPY ./run.sh /run.sh
 
-RUN mkdir -p /var/lib/grafana/dashboards
+COPY ./jdbranham-diagram-panel /var/lib/grafana/plugins
 
-COPY ./grafana_json/uni-ledger-business-1487900790298.json /var/lib/grafana/dashboards/uni-ledger-business-1487900790298.json
-COPY ./grafana_json/uni-ledger-hardware1-1487900769647.json /var/lib/grafana/dashboards/uni-ledger-hardware1-1487900769647.json
-COPY ./grafana_json/uni-ledger-hardware2-1487900779941.json /var/lib/grafana/dashboards/uni-ledger-hardware2-1487900779941.json
+RUN mkdir -p /var/lib/grafana/dashboards
 
 RUN chmod 755 /run.sh
 
