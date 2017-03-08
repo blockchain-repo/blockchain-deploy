@@ -5,6 +5,7 @@
 BigchainDB, including its storage backend (RethinkDB).
 """
 
+
 from __future__ import with_statement, unicode_literals
 
 from os import environ  # a mapping (like a dict)
@@ -16,8 +17,76 @@ from fabric.contrib.files import sed
 from fabric.operations import run, put, get
 from fabric.context_managers import settings
 
+from configparser import ConfigParser
+
+conf = ConfigParser()
+cluster_info_filename = "../conf/cluster_info.ini"
+conf.read(cluster_info_filename, encoding="utf-8")
+
+
+for section in conf.sections():
+    for option in conf.options(section=section):
+        #print("section: {}, {}={}".format(section, option, conf.get(section, option)))
+        pass
+
+# 功能开关属性
+# 1.1. apt 更新 开关
+apt_sources_switch = conf.get("on-off", "apt-sources", fallback="off")
+apt_sources_boolean = conf.getboolean("on-off", "apt-sources", fallback=False)
+os_codename = conf.get("apt-sources", "codename", fallback="trusty")
+apt_source_filename = conf.get("apt-sources", "source_filename", fallback=None)
+apt_bak_file = conf.get("apt-sources", "bak_file", fallback=True)
+apt_bak_filename = conf.get("apt-sources", "bak_filename", fallback="sources.list.bak")
+
+
+# 1.2. third apt 更新开关
+third_apt_sources_switch = conf.get("on-off", "third-apt-sources", fallback="off")
+third_apt_sources_boolean = conf.getboolean("on-off", "third-apt-sources", fallback=False)
+
+# 1.3. pip 更新开关
+pip_sources_switch = conf.get("on-off", "pip-sources", fallback="off")
+pip_sources_boolean = conf.getboolean("on-off", "pip-sources", fallback=False)
+
+# print(conf.has_option("on-off","apt-sources"))
+
+
+print("apt_sources_switch is {}".format(apt_sources_switch))
+print("apt_sources_boolean is {}".format(apt_sources_boolean))
+
+
+def update_conf_value(section, key, value, filename=cluster_info_filename):
+    if conf.has_section(section):
+        if conf.has_option(section, key):
+            conf.set(section, key, value=value)
+            conf.write(open(name=filename, mode="w"))
+
+
+def remove_conf_key(section, key, filename=cluster_info_filename):
+    if conf.has_section(section):
+        if conf.has_option(section, key):
+            conf.remove_option(key)
+            conf.write(open(name=filename, mode="w"))
+
+def read_conf_value(section, key, default=None):
+    if conf.has_section(section):
+        return conf.get(section, key, fallback=default)
+    return None
+
+
+# @task
+# def update_node_apt(switch=None, source=None, target=None):
+#     if not switch:
+#         pass
+#     pass
+
+# exit(0)
+
+
+
+
 import time
 import json
+
 
 from hostlist import public_dns_names,public_hosts,public_pwds,public_host_pwds
 
@@ -32,6 +101,17 @@ _server_port = app_config['server_port']
 _restore_server_port = app_config['restore_server_port']
 _service_name = app_config['service_name']
 _setup_name = app_config['setup_name']
+
+
+
+@task
+def pre_third_apt_sources():
+    # rethinkdb apt sources
+
+    # collectd apt sources
+    pass
+
+
 
 @runs_once
 @task
