@@ -55,7 +55,7 @@ check_blocknodes_diff
 
 #generate the unichain-archive.tar.gz
 echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
-./unichain_init.sh -dp
+./unichain_init.sh -p
 
 echo -e "[INFO]=========check control machine deploy files is ok!========="
 ./run_pre_check.sh
@@ -63,10 +63,6 @@ echo -e "[INFO]=========check control machine deploy files is ok!========="
 #bak old conf
 echo -e "[INFO]==========bak old conf=========="
 ./bak_conf.sh "old"
-
-#generate the unichain-archive.tar.gz
-echo -e "[INFO]==========update the code generate the unichain-archive.tar.gz=========="
-./unichain_init.sh -up
 
 #clusternodes stop
 echo -e "[INFO]==========stop clusternodes=========="
