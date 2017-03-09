@@ -6,7 +6,7 @@ BigchainDB, including its storage backend (RethinkDB).
 """
 
 from __future__ import with_statement, unicode_literals
-
+import os
 from os import environ  # a mapping (like a dict)
 import sys
 
@@ -1271,30 +1271,31 @@ def delete_user_group(username=None):
 
 @task
 @parallel
-def reconfig_unichain():
+def reconfig_unichain(service_name=None):
     with settings(warn_only=True):
+        if not service_name:
+            service_name = _service_name
         tmpfile = '/tmp/remote_temp.%s.txt' % os.getpid()
         get('~/.{}'.format(service_name),tmpfile)  
  
-        with open(filename) as f:
+        with open(tmpfile) as f:
             try:
                 config = json.load(f)
             except ValueError as err:
                 raise
 
-        with open('../conf/template/unichain.conf.template') as f:
+        with open('../conf/unichain.conf.template') as f:
             try:
                 config2 = json.load(f)
             except ValueError as err:
                 raise
+        config3 = {'logger_config': config2['logger_config'],'argument_config' : config2['argument_config']}
+        config.update(config3)
 
-        newconfig = update(config,config2['logger_config'])
-        newconfig = update(newconfig,config2['argument_config'])
-
-        with open(filename,'w') as f:
+        with open(tmpfile,'w') as f:
             json.dump(config, f, indent=4)
 
-        put('../conf/unichain_confiles/' + confile, 'tempfile')
+        put(tmpfile, 'tempfile')
         run('mv tempfile ~/.{}'.format(service_name))
         print('For this node, {} show-config says:'.format(service_name))
         run('{} show-config'.format(service_name))

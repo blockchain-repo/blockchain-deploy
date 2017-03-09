@@ -28,12 +28,12 @@
     },
     "backlog_reassign_delay": 30,
     "argument_config": {
-        "txs_length": 1000,
-        "pipe_maxsize": 2000
+        "txs_length": 5000,
+        "pipe_maxsize": 6000
     },
     "logger_config": {
-        "debug_to_file": false,
-        "debug_to_console": false
+        "debug_to_file": true,
+        "debug_to_console": true
     },
     "restore_server": {
         "threads": null,
