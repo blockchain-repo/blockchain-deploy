@@ -27,6 +27,14 @@
         "bind": "localhost:9984"
     },
     "backlog_reassign_delay": 30,
+    "argument_config": {
+        "txs_length": 1000,
+        "pipe_maxsize": 2000
+    },
+    "logger_config": {
+        "debug_to_file": false,
+        "debug_to_console": false
+    },
     "restore_server": {
         "threads": null,
         "workers": null,
