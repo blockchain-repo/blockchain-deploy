@@ -2,14 +2,17 @@
 
 set -e
 
-#build hardware json-1
+#build json
+echo -e "[INFO]==========begin create hardware json=========="
+echo -e "."
+echo -e ".."
+echo -e "..."
+echo -e "...."
+echo -e "......"
+echo -e "......."
+python3 explain_json.py 1 2 3
+echo -e "[INFO]==========Done=========="
 
-#build hardware json-2
-python3 explain_json.py
-
-#build business json-1
-
-#build business json-2
 
 exit 0
 

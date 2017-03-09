@@ -3,7 +3,8 @@
 ##  Install the deployment portal  ##
 #####################################
 set -e
-mkdir -p ../log
+
+mkdir -p ./log
 
 function echo_green
 {
@@ -28,7 +29,7 @@ Options:
 }
 
 chmod -f +755 *.sh 2>/dev/null
-#chmod -f +755 *.py 2>/dev/null || [[ $? -ne 0 ]] && echo "error"
+chmod -f +755 *.py 2>/dev/null || [[ $? -ne 0 ]] 
 
 case $1 in
     h|help|-h|-help)
