@@ -42,9 +42,15 @@ Options:
     install_node     install or reinstall single cluster node
     uninstall        uninstall unichain
     unichain_init    update or downnload the unichain
-                     \$1: download, if set \$1, it can download the unichain
-                     \$1: update,   if set \$1, it can update the unichain code
-                     \$1: noupdate, if set \$1, it only generate the unichain tar.gz
+                        usage:
+                            -h  使用帮助
+                            -g  使用git方式对代码进行更新打包
+                            -b  git方式操作对应的分支
+                            -s  下载代码仓库地址
+                            -u  更新代码，如果不存在则使用git方式下载代码
+                            -p  对代码进行打包，生成unichain-archive.tar.gz，并copy至sources下
+                                如果选择git方式打包，则使用git archive, 否则默认为tar & gzip 打包
+                            -d  删除下载的unichain代码及生成的unichain-archive.tar.gz文件
     "
     return 0
 }

@@ -54,6 +54,10 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 echo -e "[INFO]=========init control machine env========="
 ./run_init_env.sh
 
+#generate the unichain-archive.tar.gz
+echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
+./unichain_init.sh -dp
+
 echo -e "[INFO]=========check control machine deploy files is ok!========="
 ./run_pre_check.sh
 

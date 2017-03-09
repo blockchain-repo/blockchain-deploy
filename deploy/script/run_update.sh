@@ -22,9 +22,6 @@ fi
 source ./blockchain_nodes_conf_util.sh
 source ./common_lib.sh
 
-echo -e "[INFO]=========check control machine deploy files is ok!========="
-./run_pre_check.sh
-
 ##check blocknodes_conf format
 echo -e "[INFO]==========check cluster nodes conf=========="
 check_cluster_nodes_conf || {
@@ -55,6 +52,13 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 #check if cluster conf diff
 echo -e "[INFO]==========check cluster conf diff=========="
 check_blocknodes_diff
+
+#generate the unichain-archive.tar.gz
+echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
+./unichain_init.sh -dp
+
+echo -e "[INFO]=========check control machine deploy files is ok!========="
+./run_pre_check.sh
 
 #bak old conf
 echo -e "[INFO]==========bak old conf=========="
