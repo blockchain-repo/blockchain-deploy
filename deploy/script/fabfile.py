@@ -1269,3 +1269,32 @@ def delete_user_group(username=None):
             username = "work"
         sudo("userdel {}".format(username))
 
+@task
+@parallel
+def reconfig_unichain():
+    with settings(warn_only=True):
+        tmpfile = '/tmp/remote_temp.%s.txt' % os.getpid()
+        get('~/.{}'.format(service_name),tmpfile)  
+ 
+        with open(filename) as f:
+            try:
+                config = json.load(f)
+            except ValueError as err:
+                raise
+
+        with open('../conf/template/unichain.conf.template') as f:
+            try:
+                config2 = json.load(f)
+            except ValueError as err:
+                raise
+
+        newconfig = update(config,config2['logger_config'])
+        newconfig = update(newconfig,config2['argument_config'])
+
+        with open(filename,'w') as f:
+            json.dump(config, f, indent=4)
+
+        put('../conf/unichain_confiles/' + confile, 'tempfile')
+        run('mv tempfile ~/.{}'.format(service_name))
+        print('For this node, {} show-config says:'.format(service_name))
+        run('{} show-config'.format(service_name))
