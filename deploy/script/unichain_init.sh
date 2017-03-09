@@ -117,11 +117,9 @@ function update_code()
     cd ${CUR_PATH}/../sources/${project_name}/
     if [ "${1}" == true ]; then
         echo_red "使用git更新代码，地址:${repo_url}, 分支: ${git_branch}"
-        git pull origin
         #git pull origin ${git_branch}
-    else
-        echo_red "请添加参数g，使用git进行代码更新！"
     fi
+    git pull origin
     return 0
 }
 
