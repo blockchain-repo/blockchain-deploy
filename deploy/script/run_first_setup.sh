@@ -57,6 +57,10 @@ echo -e "[INFO]=========init control machine env========="
 echo -e "[INFO]=========check control machine deploy files is ok!========="
 ./run_pre_check.sh
 
+#generate the unichain-archive.tar.gz
+echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
+./unichain_init.sh -dp
+
 #must remove old
 echo -e "[INFO]==========init all nodes env=========="
 fab init_all_nodes

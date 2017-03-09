@@ -60,6 +60,10 @@ check_blocknodes_diff
 echo -e "[INFO]==========bak old conf=========="
 ./bak_conf.sh "old"
 
+#generate the unichain-archive.tar.gz
+echo -e "[INFO]==========update the code generate the unichain-archive.tar.gz=========="
+./unichain_init.sh -up
+
 #clusternodes stop
 echo -e "[INFO]==========stop clusternodes=========="
 ./clustercontrol.sh stop
