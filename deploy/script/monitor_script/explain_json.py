@@ -3,12 +3,17 @@ import json
 import os.path
 
 import sys
-from query_condtion import get_all_condtions,get_all_business
+from query_condtion import get_hardware2,get_business
 from file_utils import find_file,chang_dir
 
 def read_jsonFile(fileNum):
 
-    all_conditions = get_all_business()
+    if fileNum == 1:
+        all_conditions = get_business()
+    elif fileNum == 2:
+        all_conditions = get_hardware2()
+#    elif fileNum == 3:
+#
     condtions_length = len(all_conditions)
 
     conf_filename = choose_jsonFile(fileNum)
