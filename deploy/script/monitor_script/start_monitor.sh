@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 # cp the default config for grafana-unichian-docker to /grafana/
 mkdir -p /grafana
 grafana_docker_config_files=../../../grafana-unichain-docker/defaults.ini
@@ -41,3 +41,4 @@ echo -e "[INFO]==========Done=========="
 echo -e "[INFO]==========Containers run status=========="
 docker ps
 # INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../../docker-compose-monitor-dev.yml up
+exit 0

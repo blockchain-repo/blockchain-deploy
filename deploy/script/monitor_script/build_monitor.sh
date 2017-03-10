@@ -21,6 +21,7 @@ Options:
     start       create containers and startup containers
     stop        close unichain monitor and remove the docker containers
     uninstall   uninstall unichain monitor
+    add_nodes   add nodes grafana query conditions
     load *.tar  load docker images  
     "
     return 0
@@ -47,6 +48,9 @@ case $1 in
     ;;
     uninstall)
 	./uninstall_monitor.sh | tee ../log/uninstall_monitor.log
+    ;;
+    add_nodes)
+    ./add_nodes_json.sh | tee ../log/add_nodes_json.log
     ;;
     load)
 	if [ $# == 1 ]

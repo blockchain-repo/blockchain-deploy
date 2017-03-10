@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -e
+
 for i in $@
 do
 echo -e "[INFO]==========begin load "$i" images=========="
@@ -11,3 +13,4 @@ echo -e "[INFO]==========images list=========="
 docker images
 echo -e "[INFO]==========Done=========="
 
+exit 0

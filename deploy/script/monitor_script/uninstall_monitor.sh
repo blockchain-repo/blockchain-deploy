@@ -1,4 +1,5 @@
 #! /bin/bash
+set -e
 
 echo -e "[INFO]==========begin kill docker processes=========="
 killall -9 docker*
@@ -20,4 +21,4 @@ echo -e "[INFO]==========begin uninstall docker-compose=========="
 pip3 uninstall docker-compose
 echo -e "[INFO]==========Done=========="
 
-
+exit 0

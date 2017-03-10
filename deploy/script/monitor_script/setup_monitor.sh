@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 echo -e "[INFO]==========begin install docker tools=========="
 ./install_docker_pip3.sh
@@ -12,3 +13,4 @@ echo -e "[INFO]==========begin start =========="
 ./start_monitor.sh
 echo -e "[INFO]==========Done=========="
 
+exit 0
