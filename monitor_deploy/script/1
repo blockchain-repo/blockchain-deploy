@@ -35,7 +35,7 @@ if [ ! -f ${grafana_json_file3} ]; then
 fi
 
 echo -e "[INFO]==========Create containers and startup containers=========="
-INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../conf/docker-compose-monitor.yml up -d
+INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../docker-compose-monitor.yml up -d
 echo -e "[INFO]==========Done=========="
 
 echo -e "[INFO]==========Containers run status=========="

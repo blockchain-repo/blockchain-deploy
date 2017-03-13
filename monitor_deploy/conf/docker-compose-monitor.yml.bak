@@ -38,4 +38,3 @@ services:
       - "8125:8125/udp"
     environment:
       INFLUXDB_HOST: "influxdb"
-
