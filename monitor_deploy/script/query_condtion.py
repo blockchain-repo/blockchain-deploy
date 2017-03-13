@@ -156,7 +156,7 @@ def add_nodes_query(grafana_sql=None):
         exit(info)
 
     conf_filename = 'query_temple.json'
-    file_path = './grafana_temple'
+    file_path = '../conf/grafana_temple'
     old_cwd = os.getcwd()
     query_condtion_path = find_file(conf_filename, file_path)
 
