@@ -2,11 +2,11 @@
 set -e
 # cp the default config for grafana-unichian-docker to /grafana/
 mkdir -p /grafana
-grafana_docker_config_files=../grafana-unichain-docker/defaults.ini
-grafana_docker_config1_files=../grafana-unichain-docker/home.json
-grafana_json_files1=../grafana-unichain-docker/grafana_json/uni-ledger-business.json
-grafana_json_files2=../grafana-unichain-docker/grafana_json/uni-ledger-hardware1.json
-grafana_json_files3=../grafana-unichain-docker/grafana_json/uni-ledger-hardware2.json
+grafana_docker_config_files=../conf/defaults.ini
+grafana_docker_config1_files=../conf/grafana_temple/home.json
+grafana_json_files1=../conf/grafana_json/uni-ledger-business.json
+grafana_json_files2=../conf/grafana_json/uni-ledger-hardware1.json
+grafana_json_files3=../conf/grafana_json/uni-ledger-hardware2.json
 
 grafana_default_config_files=/grafana/defaults.ini
 grafana_home_json_files=/grafana/home.json
