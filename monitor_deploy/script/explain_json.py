@@ -35,7 +35,7 @@ def read_jsonFile(fileNum):
 def write_jsonFile(fileNum):
     newDic = read_jsonFile(fileNum)
     conf_filename = choose_jsonFile(fileNum)
-    file_path = '../grafana-unichain-docker/grafana_json'
+    file_path = '../conf/grafana_json'
     old_cwd = os.getcwd()
     json_files_path = find_file(conf_filename,file_path)
     # write grafana query condition into json file
