@@ -4,15 +4,21 @@ set -e
 mkdir -p /grafana
 grafana_docker_config_files=../conf/defaults.ini
 grafana_docker_config1_files=../conf/grafana_temple/home.json
-grafana_json_files1=../conf/grafana_json/uni-ledger-business.json
-grafana_json_files2=../conf/grafana_json/uni-ledger-hardware1.json
-grafana_json_files3=../conf/grafana_json/uni-ledger-hardware2.json
+grafana_json_files1=../conf/grafana_json/unichain_business.json
+grafana_json_files2=../conf/grafana_json/unichain_hardware.json
+
+#grafana_json_files1=../conf/grafana_json/uni-ledger-business.json
+#grafana_json_files2=../conf/grafana_json/uni-ledger-hardware1.json
+#grafana_json_files3=../conf/grafana_json/uni-ledger-hardware2.json
 
 grafana_default_config_files=/grafana/defaults.ini
 grafana_home_json_files=/grafana/home.json
-grafana_json_file1=/grafana/uni-ledger-business.json
-grafana_json_file2=/grafana/uni-ledger-hardware1.json
-grafana_json_file3=/grafana/uni-ledger-hardware2.json
+grafana_json_file1=/grafana/unichain_business.json
+grafana_json_file2=/grafana/unichain_hardware.json
+
+#grafana_json_file1=/grafana/uni-ledger-business.json
+#grafana_json_file2=/grafana/uni-ledger-hardware1.json
+#grafana_json_file3=/grafana/uni-ledger-hardware2.json
 
 if [ ! -f ${grafana_default_config_files} ]; then
     cp -f ${grafana_docker_config_files} ${grafana_default_config_files}
@@ -30,9 +36,9 @@ if [ ! -f ${grafana_json_file2} ]; then
     cp -f ${grafana_json_files2} ${grafana_json_file2}
 fi
 
-if [ ! -f ${grafana_json_file3} ]; then
-    cp -f ${grafana_json_files3} ${grafana_json_file3}
-fi
+#if [ ! -f ${grafana_json_file3} ]; then
+#    cp -f ${grafana_json_files3} ${grafana_json_file3}
+#fi
 
 echo -e "[INFO]==========Create containers and startup containers=========="
 INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../conf/docker-compose-monitor.yml up -d

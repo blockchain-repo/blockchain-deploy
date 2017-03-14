@@ -3,7 +3,7 @@ import json
 import os.path
 
 import sys
-from query_condtion import get_hardware2,get_business
+from query_condtion import get_hardware,get_business
 from file_utils import find_file,chang_dir
 
 def read_jsonFile(fileNum):
@@ -11,7 +11,7 @@ def read_jsonFile(fileNum):
     if fileNum == 1:
         all_conditions = get_business()
     elif fileNum == 2:
-        all_conditions = get_hardware2()
+        all_conditions = get_hardware()
 #    elif fileNum == 3:
 #
     condtions_length = len(all_conditions)
@@ -45,9 +45,9 @@ def write_jsonFile(fileNum):
 
 def choose_jsonFile(fileNum):
     if fileNum == 1:
-        return 'uni-ledger-business.json'
+        return 'unichain_hardware.json'
     elif fileNum == 2:
-        return 'uni-ledger-hardware2.json'
+        return 'unichain_business.json'
 #    elif fileNum == 3:
 #        return 'uni-ledger-hardware1.json'
 

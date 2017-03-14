@@ -120,32 +120,32 @@ def get_all_condtions():
 def get_business():
 
     business = []
-
-    business.append(get_write_block_count_condtion())
+    business.append(get_validate_transaction_condtion())
+    business.append(get_write_transaction_condtion())
+    business.append(get_write_transaction_count_condtion())
+    business.append(get_queue_gauge_condtion())
     business.append(get_uni_pro_condtion())
     business.append(get_uniApi_pro_condtion())
-    business.append(get_queue_gauge_condtion())
-    business.append(get_write_transaction_condtion())
-    business.append(get_validate_transaction_condtion())
     business.append(get_validate_block_condtion())
     business.append(get_write_block_condtion())
+    business.append(get_write_block_count_condtion())
 
     return business
 
-def get_hardware2():
-    hardware2 = []
+def get_hardware():
+    hardware = []
 
-    hardware2.append(get_diskRead_condtion())
-    hardware2.append(get_diskWrite_condtion())
-    hardware2.append(get_fileHandles_condtion())
-    hardware2.append(get_dfvalue_condtion())
+    hardware.append(get_cpu_condtion())
+    hardware.append(get_memory_condtion())
+    hardware.append(get_dfvalue_condtion())
+    hardware.append(get_diskWrite_condtion())
+    hardware.append(get_diskRead_condtion())
+    hardware.append(get_interfaceRe_condtion())
+    hardware.append(get_interfaceTx_condtion())
+    hardware.append(get_load_condtion())
+    hardware.append(get_fileHandles_condtion())
 
-    hardware2.append(get_memory_condtion())
-    hardware2.append(get_interfaceRe_condtion())
-    hardware2.append(get_interfaceTx_condtion())
-    hardware2.append(get_load_condtion())
-
-    return hardware2
+    return hardware
 
 
 

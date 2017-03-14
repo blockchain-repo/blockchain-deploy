@@ -5,9 +5,5 @@
 #example4: #username@host:port passwd
 
 #all nodes as follow:
-shaopeng@192.168.0.1:22 sss
-caiyun@192.168.0.1:22 sss
-jiangtao@192.168.0.1:22 sss
-jixiang@192.168.0.1:22 sss
-wangxin@192.168.0.1:22 sss
+
 
