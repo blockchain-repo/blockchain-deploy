@@ -2,7 +2,7 @@
 set -e
 
 echo -e "[INFO]==========begin install docker tools=========="
-./install_docker_local.sh
+./install_docker_pip3.sh
 echo -e "[INFO]==========Done=========="
 
 echo -e "[INFO]==========begin create nodes grafana query=========="
