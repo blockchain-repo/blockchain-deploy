@@ -1,10 +1,5 @@
 #!/bin/bash
 
-echo -e "[INFO]==========Decompression tar package=========="
-tar -xvf deb.tar
-echo -e "[INFO]==========Done=========="
-echo -e "  "
-
 echo -e "[INFO]==========begin install git=========="
 cd deb/git
 dpkg -i *.deb

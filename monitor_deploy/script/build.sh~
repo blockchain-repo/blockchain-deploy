@@ -22,7 +22,9 @@ Options:
     tools_net   install docker tools use pip3
     start       create containers and startup containers
     stop        close unichain monitor and remove the docker containers
-    uninstall   uninstall unichain monitor
+    decompres   decompress unichain tar package
+    uninstall   uninstall unichain monitor use local 
+    uninstall2  uninstall unichain monitor use apt-get
     add_nodes   add nodes grafana query conditions
     load *.tar  load docker images  
     "
@@ -51,7 +53,13 @@ case $1 in
     stop)
 	./stop_monitor.sh | tee ../log/stop_monitor.log
     ;;
+    decompres)
+	./decompression.sh | tee ../log/decompression.log
+    ;;
     uninstall)
+	./uninstall_monitor_local.sh | tee ../log/uninstall_monitor_local.log
+    ;;
+    uninstall2)
 	./uninstall_monitor.sh | tee ../log/uninstall_monitor.log
     ;;
     add_nodes)
