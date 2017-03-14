@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "[INFO]==========begin install git=========="
-cd deb/git
+cd unichain/deb/git
 dpkg -i *.deb
 git
 echo -e "[INFO]==========Done=========="
@@ -29,7 +29,7 @@ cp -r ./ /usr/local/lib/python3.4/dist-packages
 cd ../../
 cp docker-compose /usr/local/bin
 chmod +x /usr/local/bin/docker-compose
-cd ..
+cd ../../
 docker-compose
 echo -e "[INFO]==========Done=========="
 echo -e "  "

@@ -8,7 +8,9 @@ echo -e "[INFO]==========Done=========="
 echo -e "  "
 
 echo -e "[INFO]==========Decompression tar package=========="
+cd unichain
 tar -xvf deb.tar
+cd ..
 echo -e "[INFO]==========Done=========="
 echo -e "  "
 
