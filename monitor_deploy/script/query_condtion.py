@@ -176,8 +176,10 @@ def add_nodes_query(grafana_sql=None):
             new_queryStr = new_queryConStr.replace('bc1', hostname)
             if (index == 0):
                 final_queryStr = '[' + new_queryStr + ','
-            elif (index == node_length - 1):
+            elif (index == node_length - 2):
                 final_queryStr = final_queryStr + new_queryStr + ']'
+            elif (index == node_length - 1):
+                pass
             else:
                 final_queryStr = final_queryStr + new_queryStr + ','
     chang_dir(old_cwd)

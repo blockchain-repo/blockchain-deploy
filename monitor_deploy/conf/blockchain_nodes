@@ -5,6 +5,8 @@
 #example4: #username@host:port passwd
 
 #all nodes as follow:
+
+#nodes
 bc1@192.168.0.240:22 bc1_pwd
 bc2@192.168.0.241:22 bc2_pwd
 bc3@192.168.0.242:22 bc3_pwd
@@ -12,3 +14,5 @@ bc4@192.168.0.243:22 bc4_pwd
 bc5@192.168.0.244:22 bc5_pwd
 bc6@192.168.0.245:22 bc6_pwd
 
+#monitor machine
+bc10@192.168.0.249:22 bc10_pwd

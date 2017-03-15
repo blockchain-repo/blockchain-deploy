@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-\n
 
 import os.path
+
 # import reg_utils # usage reg_utils.reg_nodes,...
-from reg_utils import reg_nodes,reg_ip
 from file_utils import find_file,chang_dir
+from reg_utils import reg_nodes,reg_ip
 
 node_hostname = []
+node_hosts = []
+
 conf_filename = 'blockchain_nodes'
 file_path = '../conf'
 old_cwd = os.getcwd()
@@ -24,4 +27,8 @@ with open(blockchain_nodes_path) as f:
                 exit('error format...')
             username = groups[0]
             node_hostname.append(username)
+            host = groups[1]
+            node_hosts.append(host)
 chang_dir(old_cwd)
+print(node_hosts)
+print(node_hostname)

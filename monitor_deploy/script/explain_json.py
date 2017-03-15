@@ -45,9 +45,9 @@ def write_jsonFile(fileNum):
 
 def choose_jsonFile(fileNum):
     if fileNum == 1:
-        return 'unichain_hardware.json'
-    elif fileNum == 2:
         return 'unichain_business.json'
+    elif fileNum == 2:
+        return 'unichain_hardware.json'
 #    elif fileNum == 3:
 #        return 'uni-ledger-hardware1.json'
 
