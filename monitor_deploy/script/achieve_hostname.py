@@ -30,5 +30,3 @@ with open(blockchain_nodes_path) as f:
             host = groups[1]
             node_hosts.append(host)
 chang_dir(old_cwd)
-print(node_hosts)
-print(node_hostname)

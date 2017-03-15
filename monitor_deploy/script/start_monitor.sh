@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 # cp the default config for grafana-unichian-docker to /grafana/
+rm -rf /grafana
 mkdir -p /grafana
 grafana_docker_config_files=../conf/defaults.ini
 grafana_docker_config1_files=../conf/grafana_temple/home.json
