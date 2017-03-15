@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 # cp the default config for grafana-unichian-docker to /grafana/
-rm -rf /grafana
 mkdir -p /grafana
 grafana_docker_config_files=../conf/defaults.ini
 grafana_docker_config1_files=../conf/grafana_temple/home.json
@@ -47,5 +46,9 @@ echo -e "[INFO]==========Done=========="
 
 echo -e "[INFO]==========Containers run status=========="
 docker ps
+
+chown root /grafana/unichain_business.json /grafana/unichain_hardware.json /grafana/uni-ledger-hardware1.json
+chgrp root /grafana/unichain_business.json /grafana/unichain_hardware.json /grafana/uni-ledger-hardware1.json
+
 # INFLUXDB_DATA=/monitor/data INIT_SCRIPT=$PWD/init_script.influxql docker-compose -f ../../docker-compose-monitor-dev.yml up
 exit 0
