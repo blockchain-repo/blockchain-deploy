@@ -1284,7 +1284,7 @@ def reconfig_unichain(service_name=None):
             except ValueError as err:
                 raise
 
-        with open('../conf/unichain.conf.template') as f:
+        with open('../conf/template/unichain.conf.template') as f:
             try:
                 config2 = json.load(f)
             except ValueError as err:
