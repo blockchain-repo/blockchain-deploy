@@ -1,7 +1,7 @@
 {
   "__inputs": [
     {
-      "name": "DS_INFLUX",
+      "name": "influx",
       "label": "influx",
       "description": "",
       "type": "datasource",
@@ -9,7 +9,7 @@
       "pluginName": "InfluxDB"
     },
     {
-      "name": "DS_COLLECTD",
+      "name": "collectd",
       "label": "collectd",
       "description": "",
       "type": "datasource",
@@ -92,7 +92,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -158,7 +158,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -224,7 +224,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -290,7 +290,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -356,7 +356,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -422,7 +422,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -488,7 +488,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -554,7 +554,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -620,7 +620,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_INFLUX}",
+          "datasource": "influx",
           "editable": true,
           "error": false,
           "fill": 1,

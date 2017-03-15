@@ -1,7 +1,7 @@
 {
   "__inputs": [
     {
-      "name": "DS_COLLECTD",
+      "name": "collectd",
       "label": "collectd",
       "description": "",
       "type": "datasource",
@@ -156,7 +156,7 @@
           },
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -302,7 +302,7 @@
           },
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -448,7 +448,7 @@
           },
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -522,7 +522,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -588,7 +588,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -654,7 +654,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -720,7 +720,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -857,7 +857,7 @@
           },
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -931,7 +931,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "${DS_COLLECTD}",
+          "datasource": "collectd",
           "editable": true,
           "error": false,
           "fill": 1,
