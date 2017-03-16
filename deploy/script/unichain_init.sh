@@ -81,7 +81,7 @@ function delete_code()
 function update_code()
 {
     cd ${CUR_PATH}/../sources/${project_name}/
-    if [ "${1}" == true ]; then
+    if [ "$1" == true ]; then
         echo_red "使用git更新代码，地址:${repo_url}, 分支: ${git_branch}"
         #git pull origin ${git_branch}
     fi
@@ -99,9 +99,8 @@ function pack_code()
         git archive ${git_branch} --format=tar | gzip > ${filename_app_tar_gz}
     else
         echo_red "使用 tar & gzip 打包本地代码并生成 ${filename_app_tar_gz}"
-        tar -cf unichain-archive.tar *
-        gzip -f unichain-archive.tar
-        #gzip unichain-archive.tar
+        tar -czf unichain-archive.tar.gz --exclude-vcs *
+        #gzip -f unichain-archive.tar
     fi
     cp  ${filename_app_tar_gz} ..
     return 0

@@ -6,9 +6,25 @@ git clone https://git.oschina.net/wxcsdb88/unichain_deploy.git
 ```
 
 ## 2. download or update program
-```
-bash build.sh unichain_init [download|update|noupdate]
-```
+
+If the first install, you can run 
+
+`bash build.sh first_setup`
+
+else you should run 
+
+`bash build.sh unichain_init -gup` 
+
+to pull and pack the code.
+
+If you only want to test the localcode and update it, you should run 
+
+`bash build.sh unichain_init -p`
+
+and then run 
+
+`bash build.sh update`
+
 
 ## 2. first setup
 ```

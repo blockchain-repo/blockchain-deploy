@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 
 """A Fabric fabfile with functionality to prepare, install, and configure
@@ -1299,3 +1298,4 @@ def reconfig_unichain(service_name=None):
         run('mv tempfile ~/.{}'.format(service_name))
         print('For this node, {} show-config says:'.format(service_name))
         run('{} show-config'.format(service_name))
+

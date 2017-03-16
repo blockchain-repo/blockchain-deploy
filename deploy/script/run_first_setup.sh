@@ -61,13 +61,12 @@ echo -e "[INFO]==========download and generate the unichain-archive.tar.gz======
 echo -e "[INFO]=========check control machine deploy files is ok!========="
 ./run_pre_check.sh
 
+echo -e "[INFO]=========check control machine deploy files is ok!========="
+./run_pre_check.sh
+
 #must remove old
 echo -e "[INFO]==========init all nodes env=========="
-fab init_all_nodes
-
-#base sofeware install: necessary for the first install
-echo -e "[INFO]==========install base sofeware========="
-fab install_base_software
+fab init_all_nodes:shred=True,times=1,show=False,config_del=True
 
 #collectd install&configure
 echo -e "[INFO]==========install collectd========="
