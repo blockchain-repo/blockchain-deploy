@@ -78,11 +78,13 @@ deploy/conf/collectd.conf
 deploy/conf/rethinkdb.conf
 deploy/conf/unichain_confiles
 deploy/script/keypairs.py
+
 # *.gz
 
 #first push should commend and none after
 deploy/conf/blockchain_nodes
 deploy/conf/monitor_config
+deploy/conf/cluster_info.ini
 
 #deploy/conf/template/unichain.conf.template
 deploy/sources/*.gz
