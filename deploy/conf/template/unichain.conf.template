@@ -1,0 +1,44 @@
+{
+    "CONFIGURED": true,
+    "keypair": {
+        "public": "",
+        "private": ""
+    },
+    "database": {
+        "port": 28015,
+        "name": "bigchain",
+        "host": "localhost"
+    },
+    "restore_endpoint": "http://localhost:9986/uniledger/v1/collect",
+    "api_endpoint": "http://localhost:9984/uniledger/v1",
+    "statsd": {
+        "rate": 0.01,
+        "port": 8125,
+        "host": "localhost"
+    },
+    "app": {
+        "setup_name": "UnichainDB",
+        "service_name": "unichain"
+    },
+    "keyring": [],
+    "server": {
+        "threads": null,
+        "workers": null,
+        "bind": "localhost:9984"
+    },
+    "backlog_reassign_delay": 30,
+    "argument_config": {
+        "txs_length": 1000,
+        "pipe_maxsize": 2000
+    },
+    "logger_config": {
+        "debug_to_file": true,
+        "debug_to_console": true
+    },
+    "restore_server": {
+        "threads": null,
+        "workers": null,
+        "bind": "localhost:9986",
+        "compress": true
+    }
+}

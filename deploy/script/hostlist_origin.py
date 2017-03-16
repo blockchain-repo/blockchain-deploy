@@ -6,7 +6,7 @@ import os.path
 
 from reg_utils import reg_nodes,reg_ip
 
-conf_filename = "blockchain_nodes"
+conf_filename = "origin_nodes"
 
 # cwd = current working directory
 old_cwd = os.getcwd()

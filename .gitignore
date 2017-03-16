@@ -87,6 +87,7 @@ deploy/conf/monitor_config
 #deploy/conf/template/unichain.conf.template
 deploy/sources/*.gz
 deploy/sources/unichain
+deploy/conf/log
 
 tests/
 test/

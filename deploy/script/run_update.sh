@@ -22,9 +22,6 @@ fi
 source ./blockchain_nodes_conf_util.sh
 source ./common_lib.sh
 
-echo -e "[INFO]=========check control machine deploy files is ok!========="
-./run_pre_check.sh
-
 ##check blocknodes_conf format
 echo -e "[INFO]==========check cluster nodes conf=========="
 check_cluster_nodes_conf || {
@@ -62,7 +59,11 @@ echo -e "[INFO]==========bak old conf=========="
 
 #generate the unichain-archive.tar.gz
 echo -e "[INFO]==========update the code generate the unichain-archive.tar.gz=========="
-./unichain_init.sh -up
+# Please update the code mannually
+./unichain_init.sh -p
+
+echo -e "[INFO]=========check control machine deploy files is ok!========="
+./run_pre_check.sh
 
 #clusternodes stop
 echo -e "[INFO]==========stop clusternodes=========="
