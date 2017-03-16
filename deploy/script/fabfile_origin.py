@@ -506,7 +506,7 @@ def create_new_user(node_info_new_user_section="node-info-new-user"):
 
                 cmd_sudo_remove = "sed -i /^{}.*ALL=/d /etc/sudoers 2>/dev/null".format(username)
                 cmd_sudo_add = 'sed -i /^{}.*ALL=/a"{}  ALL=(ALL:ALL) ALL" /etc/sudoers'.format(
-                    env.user, username)
+                    "root", username)
                 sudo(cmd_useradd)
                 sudo("echo {}".format(cmd_chpasswd))
                 sudo(cmd_sudo_remove)
@@ -889,7 +889,7 @@ def add_user_to_sudo(username=None):
 
         if result != "0":
             sudo("sed -i /^{}.*ALL=/d /etc/sudoers 2>/dev/null".format(username))
-            sudo("sed -i /^{}.*ALL=/a'{}    ALL=(ALL:ALL) ALL' /etc/sudoers".format(env.user, username))
+            sudo("sed -i /^{}.*ALL=/a'{}    ALL=(ALL:ALL) ALL' /etc/sudoers".format("root", username))
         else:
             print(red("the user not exist!"))
 
