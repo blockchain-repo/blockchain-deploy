@@ -298,12 +298,14 @@ def kill_all_nodes(service_name=None):
 @parallel
 @function_tips()
 def install_rethinkdb():
-    with settings(hide('running', 'stdout'), warn_only=True):
+    # with settings(hide('stdout'), warn_only=True):
+    with settings(warn_only=True):
         sudo("mkdir -p /data/rethinkdb")
         # install rethinkdb
-        # sudo("echo 'deb http://download.rethinkdb.com/apt trusty main' | sudo tee /etc/apt/trusty-sources.list.d/rethinkdb.list")
-        # sudo("wget -qO- http://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -")
-        # sudo("apt-get update")
+        sudo("source /etc/lsb-release && echo 'deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main' \
+        | sudo tee /etc/apt/trusty-sources.list.d/rethinkdb.list")
+        sudo("wget -qO- https://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -")
+        sudo("apt-get update")
 
         sudo("apt-get -y install rethinkdb")
         # initialize rethinkdb data-dir

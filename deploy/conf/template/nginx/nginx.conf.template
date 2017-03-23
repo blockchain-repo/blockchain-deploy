@@ -1,0 +1,176 @@
+#运行用户
+# user root;
+#启动进程,通常设置成和cpu的数量相等
+#每个Nginx进程平均耗费10M~12M内存
+worker_processes auto;
+
+#该值为worker进程可以打开的最大文件描述符的数量
+#worker_limit_nofile
+
+#全局错误日志及PID文件
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+#pid  /var/run/nginx.pid;
+
+pid /nginx/run/nginx.pid;
+
+
+
+#工作模式及连接数上限
+events {
+    #epoll是多路复用IO(I/O Multiplexing)中的一种方式,
+    #仅用于linux2.6以上内核,可以大大提高nginx的性能
+    #如果你使用Linux 2.6+，你应该使用epoll。如果你使用*BSD，你应该使用kqueue。
+    use  epoll;
+
+    #告诉nginx收到一个新连接通知后接受尽可能多的连接
+    multi_accept on;
+
+    #单个后台worker process进程的最大并发链接数
+    #最大客户数也由系统的可用socket连接数限制（~ 64K ??? 2^20 1048576），所以设置不切实际的高没什么好处。
+    worker_connections 768;
+
+    #设置一个worker能够同时打开的最大连接数，该值最大为worker_rlimit_nofile的值
+    #在nginx作为http服务器的时候，最大连接数为worker_processes *  worker_connctions
+    #在nginx作为反向代理服务器的时候，最大连接数为worker_processes * worker_connections / 2
+
+    # 并发总数是 worker_processes 和 worker_connections 的乘积
+    # 即 max_clients = worker_processes * worker_connections
+    # 在设置了反向代理的情况下，max_clients = worker_processes * worker_connections / 4  为什么
+    # 为什么上面反向代理要除以4，应该说是一个经验值
+    # 根据以上条件，正常情况下的Nginx Server可以应付的最大连接数为：4 * 8000 = 32000
+    # worker_connections 值的设置跟物理内存大小有关
+    # 因为并发受IO约束，max_clients的值须小于系统可以打开的最大文件数
+    # 而系统可以打开的最大文件数和内存大小成正比，一般1GB内存的机器上可以打开的文件数大约是10万左右
+    # 我们来看看360M内存的VPS可以打开的文件句柄数是多少：
+    # $ cat /proc/sys/fs/file-max
+    # 输出 34336
+    # 32000 < 34336，即并发连接总数小于系统可以打开的文件句柄总数，这样就在操作系统可以承受的范围之内
+    # 所以，worker_connections 的值需根据 worker_processes 进程数目和系统可以打开的最大文件总数进行适当地进行设置
+    # 使得并发总数小于操作系统可以打开的最大文件数目
+    # 其实质也就是根据主机的物理CPU和内存进行配置
+    # 当然，理论上的并发总数可能会和实际有所偏差，因为主机还有其他的工作进程需要消耗系统资源。
+    # ulimit -SHn 65535
+}
+
+http {
+    #sendfile可以让sendfile()发挥作用。sendfile()可以在磁盘和TCP socket之间互相拷贝数据(或任意两个文件描述符)。
+    #Pre-sendfile是传送数据之前在用户空间申请数据缓冲区。之后用read()将数据从文件拷贝到这个缓冲区，write()将缓冲区数据写入网络。
+    #sendfile()是立即将数据从磁盘读到OS缓存。因为这种拷贝是在内核完成的，sendfile()要比组合read()和write()以及打开关闭丢弃缓冲更加有效
+    sendfile on;
+
+    #告诉nginx在一个数据包里发送所有头文件，而不一个接一个的发送
+    tcp_nopush on;
+
+    #告诉nginx不要缓存数据，而是一段一段的发送–当需要及时发送数据时，就应该给应用设置这个属性，这样发送一小块数据信息时就不能立即得到返回值
+    tcp_nodelay on;
+
+    #keepalive_timeout 65;
+
+    #给客户端分配keep-alive链接超时时间。服务器将在这个超时时间过后关闭链接。我们将它设置低些可以让ngnix持续工作的时间更长
+    keepalive_timeout 60;
+
+    #设置请求头和请求体(各自)的超时时间。我们也可以把这个设置低些。
+    client_header_timeout 10;
+    client_body_timeout 10;
+
+    #告诉nginx关闭不响应的客户端连接。这将会释放那个客户端所占有的内存空间。
+    reset_timedout_connection on;
+
+    #指定客户端的响应超时时间。这个设置不会用于整个转发器，而是在两次客户端读取操作之间。
+    #如果在这段时间内，客户端没有读取任何数据，nginx就会关闭连接。
+    send_timeout 10;
+
+    types_hash_max_size 2048;
+    server_names_hash_bucket_size 128;
+    client_header_buffer_size 32k;
+    large_client_header_buffers 4 32k;
+    client_max_body_size 8m;
+
+    log_format main  '$remote_addr - $remote_user [$time_local] "$request" '
+               '$status $body_bytes_sent "$http_referer" '
+               '"$http_user_agent" $http_x_forwarded_for'
+               '$upstream_status "$upstream_addr" $upstream_response_time "$http_host" $request_time';
+
+    log_format main22 '$remote_addr - $remote_user [$time_local] "$request" '
+                '$status $bytes_sent "$http_referer" "$http_user_agent" '
+                '"$gzip_ratio"';
+
+    log_format download '$remote_addr - $remote_user [$time_local] '
+                '"$request" $status $bytes_sent '
+                '"$http_referer" "$http_user_agent" '
+                '"$http_range" "$sent_http_content_range"';
+
+
+    #server_tokens 并不会让nginx执行的速度更快，但它可以关闭在错误页面中的nginx版本数字，这样对于安全性是有好处的
+    server_tokens off;
+
+    #access_log off;
+
+    # 告诉nginx只能记录严重的错误
+    #error_log /var/log/nginx/error.log crit;
+
+
+
+    #proxy_connect_timeout   75;
+    #proxy_send_timeout   75;
+    #proxy_read_timeout   75;
+    #proxy_buffer_size   4k;
+    #proxy_buffers   4 32k;
+    #proxy_busy_buffers_size   64k;
+
+    proxy_temp_file_write_size 128k;
+    proxy_temp_path   /nginx/cache/nginx/temp;
+    proxy_cache_path  /nginx/cache/nginx/cache levels=1:2 keys_zone=cache_one:100m inactive=7d max_size=10g;
+
+
+    # limit_conn为给定的key设置最大连接数。这里key是addr，我们设置的值是100，也就是说我们允许每一个IP地址最多同时打开有100个连接。
+    # limit_conn_zone设置用于保存各种key（比如当前连接数）的共享内存的参数。5m就是5兆字节，
+    # 这个值应该被设置的足够大以存储（32K*5）32byte状态或者（16K*5）64byte状态。
+    #limit_conn_zone $binary_remote_addr zone=addr:5m;
+    #limit_conn addr 100;
+
+    #default_type text/html;
+
+    gzip_static on;
+    gzip on;
+    gzip_min_length  1k;
+    gzip_buffers     4  16k;
+    gzip_http_version  1.1;
+    gzip_comp_level  2;
+    gzip_types  text/plain application/x-javascript text/css application/xml;
+    gzip_vary  on;
+    gzip_disable "msie6";
+
+    charset UTF-8;
+
+    include /nginx/conf/mime.types;
+
+    default_type application/octet-stream;
+
+    include /nginx/conf/sites-enabled/*;
+
+}
+
+
+#mail {
+#	# See sample authentication script at:
+#	# http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript
+#
+#	# auth_http localhost/auth.php;
+#	# pop3_capabilities "TOP" "USER";
+#	# imap_capabilities "IMAP4rev1" "UIDPLUS";
+#
+#	server {
+#		listen     localhost:110;
+#		protocol   pop3;
+#		proxy      on;
+#	}
+#
+#	server {
+#		listen     localhost:143;
+#		protocol   imap;
+#		proxy      on;
+#	}
+#}

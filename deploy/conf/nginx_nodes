@@ -1,0 +1,9 @@
+#example	content					result
+#example1: username@host:port passwd             username@host:port passwd
+#example2: username@host:port passwd           username@host:port passwd
+#example3: username@host:port passwd #comment    username@host:port passwd
+#example4: #username@host:port passwd
+
+# next line should be leave and remain one blank line it!!!
+#all nodes as follow:
+

@@ -1,0 +1,38 @@
+
+# 设定负载均衡后台服务器列表
+
+upstream nginx_server{
+    #server ip:port ;
+    #server ip:port weight=1 max-fails=3 fail_timeout=10;
+    #NEW_UPSTREAM_SERVER
+    server 192.168.1.101:9984;
+    server 192.168.1.102:9984;
+
+}
+
+server {
+      listen 118 default_server;
+      listen [::]:118 default_server ipv6only=on;
+
+      root /nginx/html;
+      index index.html index.htm;
+
+      # Make site accessible from http://localhost/
+      server_name localhost;
+
+      access_log /nginx/log/access.log main;
+      error_log /nginx/log/error.log;
+
+      location / {
+              # First attempt to serve request as file, then
+              # as directory, then fall back to displaying a 404.
+              proxy_pass http://nginx_server/;
+              # Uncomment to enable naxsi on this location
+              # include /etc/nginx/naxsi.rules
+              proxy_set_header Host $http_host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+      }
+
+}

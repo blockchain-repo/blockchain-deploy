@@ -81,6 +81,8 @@ deploy/script/keypairs.py
 
 # *.gz
 
+*nginx*.tar.gz
+
 #first push should commend and none after
 deploy/conf/blockchain_nodes
 deploy/conf/monitor_config
