@@ -18,6 +18,18 @@ db_name:'bigchain'
 ### 1. 控制机环境
 `Python3.4+`, `Fabric3`, `git`, `ssh`
 
+`Fabric3` install maybe need:
+
+```
+sudo apt-get -y install git gcc g++ python3-dev libssl-dev libffi-dev python3-setuptools \
+python3-pip ntp screen
+
+sudo pip3 install --upgrade pip
+sudo pip3 install --upgrade setuptools
+
+sudo pip3 install fabric3
+```
+
 ### 2. 下载部署项目
 ```
 git clone https://git.oschina.net/uni-ledger/unichain_deploy.git
