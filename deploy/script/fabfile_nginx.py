@@ -9,6 +9,7 @@ UnichainDB, including its storage backend (RethinkDB).
 from __future__ import with_statement, unicode_literals
 
 import sys
+import re
 
 import time
 
@@ -413,6 +414,9 @@ def make_install_nginx(filename=None):
         sudo("mkdir -p {base_nginx_dir}/tmp/nginx/{{client,proxy,fastcgi,uwsgi,scgi}}"
              .format(base_nginx_dir=base_nginx_dir))
 
+        # nginx related script
+        sudo("mkdir -p {base_nginx_dir}/script".format(base_nginx_dir=base_nginx_dir))
+
         sudo("mkdir -p {base_nginx_dir}/conf/sites-enabled".format(base_nginx_dir=base_nginx_dir))
         # enable: default -> /etc/nginx/sites-available/default
         # ln -s /etc/nginx/sites-available/default default
@@ -610,6 +614,7 @@ def uninstall_nginx():
         sudo("rm -rf {}".format(base_nginx_dir))
 
 
+# ------------ 7. nginx common ops ----------
 @task
 @parallel
 @function_tips()
@@ -622,6 +627,104 @@ def nginx_ops(op=None):
             return
         result = sudo("service nginx {}".format(op))
         print(yellow(result))
+
+
+@task
+@parallel
+@function_tips()
+def config_nginx_log_cut(delete=None):
+    # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
+        conf_dir = "../sources/sys_config/nginx/base_conf"
+        filename = "nginx_log_cut_days.sh"
+        conf_file = "{}/{}".format(conf_dir, filename)
+        remote_conf_file = "/nginx/script/{}".format(filename)
+
+        if delete:
+            sudo("rm -rf {}".format(conf_file))
+
+        put(conf_file, remote_conf_file, mode=0o755, use_sudo=True)
+        sudo("chown {0}:{0} -R {1}".format("root", remote_conf_file))
+
+
+def reg_utils(reg, str=None):
+    if not str:
+        # print(red("input should not be empty!"))
+        return False
+    result = re.match(reg, str)
+    # print(red(result))
+    if not result:
+        return False
+    else:
+        return True
+
+
+@task
+@parallel
+@function_tips()
+def config_nginx_log_crontab(m=None, h=None, dom=None, mon=None, dow=None, user=None):
+    with settings(hide('stdout'), warn_only=True):
+        # minute - 从0到59的整数
+        m_reg = r"[0-5]?[0-9]$"
+        # hour - 从0到23的整数
+        h_reg = r"1?[0-9]$|(2[0-3])$"
+        # day - 从1到31的整数 (必须是指定月份的有效日期)
+        dom_reg = r"[1-2]?[1-9]$|[1-3][0-1]$"
+        # month - 从1到12的整数 (或如Jan或Feb简写的月份)
+        mon_reg = r"[1-9]$|1[1-2]$"
+        # dayofweek - 从0到7的整数，0或7用来描述周日 (或用Sun或Mon简写来表示)
+        dow_reg = r"[0-7]$"
+        # command - 需要执行的命令(可用as ls /proc >> /tmp/proc或 执行自定义脚本的命令)
+
+        if not reg_utils(m_reg, m):
+            m = "*"
+        else:
+            m = int(m)
+
+        if not reg_utils(h_reg, h):
+            h = "*"
+        else:
+            h = int(h)
+
+        if not reg_utils(dom_reg, dom):
+            dom = "*"
+        else:
+            dom = int(dom)
+
+        if not reg_utils(mon_reg, mon):
+            mon = "*"
+        else:
+            mon = int(mon)
+
+        if not reg_utils(dow_reg, dow):
+            dow = "*"
+        else:
+            dow = int(dow)
+
+        # not exist?
+        if not user:
+            user = "root"
+        else:
+            cmd_exist_user = "cat /etc/passwd|grep -w {}|wc -l".format(user)
+            result = sudo(cmd_exist_user)
+            if result == "0":
+                print(red("[{}] not exist the user {}".format(env.host_string, user)))
+                return
+        # m h dom mon dow user  command
+        # vi /etc/crontab
+        script_file_name = "nginx_log_cut_days.sh"
+        script_file = "/nginx/script/{}".format(script_file_name)
+        crontab_script = "bash {} 2>/dev/null".format(script_file)
+        # command = " 0 0    * * *   root    bash {} 2>/dev/null".format(script_file)
+        command = "{:<2} {:<2}   {} {} {}   {}   {}".format(
+            m, h, dom, mon, dow, user, crontab_script)
+
+        # command = "{m} {h}     {dom} {mon} {dow}   {user}   {crontab_script}".format(
+        #     m=m, h=h, dom=dom, mon=mon, dow=dow, user=user, crontab_script=crontab_script)
+
+        sudo("sed -i /'{}'/d /etc/crontab".format(script_file_name))
+        sudo("echo '{}' >> /etc/crontab".format(command))
+        sudo("/etc/init.d/cron restart")
 
 
 # ----------------------------- new user password update start ------------------------------

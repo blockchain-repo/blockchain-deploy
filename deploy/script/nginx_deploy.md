@@ -42,10 +42,20 @@ bash nginx_servers_generate.sh <upstream_name> <server_port> <delete>"
 
 `upstream_name` is also the generate filename!
 
-If you have finished the file modify in ../sources/sys_config/nginx/servers/,
+If you have finished the file modify in `../sources/sys_config/nginx/servers/`,
 you can go the next step!
 
 ### 5. send the OK servers config
 ```
 bash nginx_servers_send.sh <upstream_name>
+```
+
+### 6. nginx cut log
+`nginx_log_cut_days.sh` in `../sources/sys_config/nginx/base_conf/`
+
+```
+# bash nginx_log_cut.sh <m> <h> <dom> <mon> <dow> <user>
+
+bash nginx_log_cut.sh 0 0
+
 ```

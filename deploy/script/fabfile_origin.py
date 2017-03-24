@@ -381,7 +381,7 @@ def update_node_hostname(use_conf=True, prefix="unichain", start=1, uni=False):
 @hosts("localhost")
 @task
 @function_tips()
-def clear_blockchain_nodes(pos=None):
+def clear_blockchain_nodes(pos=None, tips=None):
     with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
         if not pos:
             pos = "#all nodes as follow"
@@ -391,22 +391,27 @@ def clear_blockchain_nodes(pos=None):
             print(red("file {} not exist !".format(file)))
             return
 
-        # lines = local("grep '{}' -A 500 {} |awk 'NR>=2'|wc -l 2>/dev/null".format(pos, file),  capture=True)
-        local("sed -i '/{}/{{p;:a;N;$!ba;d}}' {}".format(pos, file))
-        # print(blue("{} lines math".format(lines)))
-        time.sleep(2)
+        pos_line_num = local("grep -n '{pos}' {file} |awk 'NR==1'|awk -F ':' '{{print $1}}'"
+                            .format(pos=pos, file=file), capture=True)
+        if pos_line_num:
+            pos_linenum = int(pos_line_num)
+            if tips:
+                lines = local("sed -n '{},$p' '{}'|wc -l".format(pos_linenum, file), capture=True)
+                if int(lines) >= 1:
+                    content = local("sed -n '{},$p' '{}' 2>/dev/null".format(pos_linenum+1, file), capture=True)
+                    if content:
+                        confirm = prompt('Would you like to continue delete the content follows:\n{}\nafter "{}" in file {} ? \
+                    (y/n)'.format(content, pos, file),
+                                     default='n', validate=r'^y|n$')
+                        if confirm == "n":
+                            print(red("{} give up delete the content after {} in file {}".format(env.host_string, pos, file)))
+                            return
+            local("sed -i '{start},$d' {file}".format(start=pos_linenum+1, file=file))
+            file_content = local("cat {}".format(file), capture=True)
+            print(blue("now {} content, as follows:".format(file)))
+            print(yellow(file_content))
 
-        # if int(lines) >= 1:
-        #     content = local("grep '{}' -A 200 {} |awk 'NR>=2' 2>/dev/null".format(pos, file), capture=True)
-        # confirm = prompt('Would you like to continue delete the content follows:\n{}\nafter "{}" in file {} ? \
-        # (y/n)'.format(content, pos, file),
-        #                  default='n', validate=r'^y|n$')
-        # if confirm == "n":
-        #     print(red("{} give up delete the content after {} in file {}".format(env.host_string, pos, file)))
-        #     return
-
-
-
+    time.sleep(1)
 # ------------ 2.1 clear_blockchain_nodes end ----------
 
 
@@ -422,7 +427,8 @@ def generates_new_user_node_info(switch=True):
         # log
         pos = "#all nodes as follow"
         file = "../conf/blockchain_nodes"
-        local("sed -i '/{}/{{p;:a;N;$!ba;d}}' {}".format(pos, file))
+        clear_blockchain_nodes(pos=pos)
+
         # copy the option values append in content after
         if not conf.has_section("node-info-new-user") or len(conf.items("node-info-new-user")) == 0:
             exit("not exist section node-info-new-user or length is  0!")
