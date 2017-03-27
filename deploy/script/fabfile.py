@@ -319,7 +319,7 @@ def install_rethinkdb():
 def configure_rethinkdb():
     """Configure of RethinkDB"""
     with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
-        # copy config file to target system
+        # copy base_conf file to target system
         put('../conf/rethinkdb.conf',
             '/etc/rethinkdb/instances.d/default.conf',
             mode=0o600,
@@ -471,7 +471,7 @@ def configure_collectd():
         # fix: lib version too high
         sudo('ln -sf /lib/x86_64-linux-gnu/libudev.so.?.?.? /lib/x86_64-linux-gnu/libudev.so.0')
         sudo('ldconfig')
-        # copy config file to target system
+        # copy base_conf file to target system
         put('../conf/collectd.conf',
             '/etc/collectd/collectd.conf',
             mode=0o600,
@@ -543,7 +543,7 @@ def send_confile(confile, service_name=None):
 
         put('../conf/unichain_confiles/' + confile, 'tempfile')
         run('mv tempfile ~/.{}'.format(service_name))
-        run('{} show-config'.format(service_name))
+        run('{} show-base_conf'.format(service_name))
 
 
 # Install UnichainDB from the archive file
@@ -1231,5 +1231,5 @@ def reconfig_unichain(service_name=None):
 
         put(tmpfile, 'tempfile')
         run('mv tempfile ~/.{}'.format(service_name))
-        print('For this node, {} show-config says:'.format(service_name))
-        run('{} show-config'.format(service_name))
+        print('For this node, {} show-base_conf says:'.format(service_name))
+        run('{} show-base_conf'.format(service_name))

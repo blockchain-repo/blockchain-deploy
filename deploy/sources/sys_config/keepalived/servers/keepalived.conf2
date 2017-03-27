@@ -1,0 +1,57 @@
+# master_keepalived.conf
+
+! Configuration File for keepalived
+
+global_defs {
+   smtp_connect_timeout 30
+   router_id LVS_DEVEL
+}
+
+vrrp_script chk_nginx {
+	interval 2
+	#健康检查脚本，当脚本返回值不为0时认为失败
+    script "/keepalived/script/check_nginx.sh"
+    #当检查失败后，将vrrp_instance的priority减小5
+    weight -3
+	#连续监测失败3次，才认为真的健康检查失败。并调整优先级
+    fall 3
+	#连续监测2次成功，就认为成功。但不调整优先级
+    rise 2
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface {interface}
+    virtual_router_id 101
+    # 此处是主 Nginx 的 IP 地址.
+    mcast_src_ip {mcast_src_ip}
+    # 该机的 priority(优先) 为 100
+    priority {priority} # 150
+    advert_int 1
+    #允许一个priority比较低的节点作为master，即使有priority更高的节点启动。
+    nopreempt
+    authentication {
+        auth_type PASS
+        #定义主从的验证方式以及密码，一般使用PASS(最长8位，超过了只会识别前8位作为密码)
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+        {virtual_ipaddress}
+
+    }
+     track_script {
+     	#本vrrp_instance所引用的脚本配置，名称就是vrrp_script 定义的容器名
+        chk_nginx # script
+    }
+
+    #notify_master <STRING>|<QUOTED-STRING>
+    #notify_backup <STRING>|<QUOTED-STRING>
+    #notify_fault <STRING>|<QUOTED-STRING>
+    #notify <STRING>|<QUOTED-STRING>
+    #smtp_alert
+
+    #notify_master "/keepalived/script/notify.sh master"
+    #notify_backup "/keepalived/script/notify.sh backup"
+    # notify_fault  "/keepalived/script/notify.sh fault"
+    #notify_stop   "/keepalived/script/notify.sh stop"
+}

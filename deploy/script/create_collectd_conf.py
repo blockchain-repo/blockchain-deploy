@@ -33,7 +33,7 @@ if not existTemplateFile:
     os.chdir(old_cwd)
     exit(info)
 
-#config file exist
+#base_conf file exist
 if os.path.isfile(conf_filename):
     os.remove(conf_filename)
     print("Remove old file {}".format(conf_filename))

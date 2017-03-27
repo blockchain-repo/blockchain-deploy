@@ -68,7 +68,7 @@ def write_keypairs(old_keypairs_list):
     with open('keypairs.py', 'w') as f:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('"""A set of keypairs for use in deploying\n')
-        f.write('UnichainDB servers with a predictable set of keys.\n')
+        f.write('UnichainDB base_conf with a predictable set of keys.\n')
         f.write('"""\n')
         f.write('\n')
         f.write('from __future__ import unicode_literals\n')

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Given a directory full of default BigchainDB config files,
-transform them into config files for a cluster with proper
+"""Given a directory full of default BigchainDB base_conf files,
+transform them into base_conf files for a cluster with proper
 keyrings, API endpoint values, etc. This script is meant to
 be interpreted as a Python 2 script.
 
@@ -10,7 +10,7 @@ all the hosts in the cluster.
 
 Note 2: If the optional -k argument is included, then a keypairs.py
 file must exist and must have enough keypairs in it to assign one
-to each of the config files in the directory of config files.
+to each of the base_conf files in the directory of base_conf files.
 You can create a keypairs.py file using write_keypairs_file.py
 
 Usage:
@@ -36,13 +36,13 @@ if os.path.isfile('keypairs.py'):
 os.chdir(unichain_confiles)
 
 # Parse the command-line arguments
-desc = 'Transform a directory of default {} config files '.format(app_config['setup_name'])
-desc += 'into config files for a cluster'
+desc = 'Transform a directory of default {} base_conf files '.format(app_config['setup_name'])
+desc += 'into base_conf files for a cluster'
 parser = argparse.ArgumentParser(description=desc)
 parser.add_argument('dir',
-                    help='Directory containing the config files')
+                    help='Directory containing the base_conf files')
 parser.add_argument('number_of_files',
-                    help='Number of config files expected in dir',
+                    help='Number of base_conf files expected in dir',
                     type=int)
 parser.add_argument('-k', '--use-keypairs',
                     action='store_true',
@@ -68,13 +68,13 @@ num_keypairs = len(keypairs_list)
 
 if use_keypairs:
     if num_keypairs < num_files:
-        raise ValueError('There are {} config files in {} but '
+        raise ValueError('There are {} base_conf files in {} but '
                          'there are only {} keypairs in keypairs.py'.
                          format(num_files, conf_dir, num_keypairs))
     print('Using keypairs from keypairs.py')
     pubkeys = [keypair[1] for keypair in keypairs_list[:num_files]]
 else:
-    # read the pubkeys from the config files in conf_dir
+    # read the pubkeys from the base_conf files in conf_dir
     pubkeys = []
     for filename in conf_files:
         file_path = os.path.join(conf_dir, filename)
@@ -83,7 +83,7 @@ else:
             pubkey = conf_dict['keypair']['public']
             pubkeys.append(pubkey)
 
-# Rewrite each config file, one at a time
+# Rewrite each base_conf file, one at a time
 for i, filename in enumerate(conf_files):
     file_path = os.path.join(conf_dir, filename)
     with open(file_path, 'r') as f:
@@ -96,7 +96,7 @@ for i, filename in enumerate(conf_files):
             conf_dict['keypair']['private'] = keypair[0]
             conf_dict['keypair']['public'] = keypair[1]
         # The keyring is the list of *all* public keys
-        # minus the config file's own public key
+        # minus the base_conf file's own public key
         keyring = list(pubkeys)
         keyring.remove(conf_dict['keypair']['public'])
         conf_dict['keyring'] = keyring
@@ -118,10 +118,10 @@ for i, filename in enumerate(conf_files):
         # multi apps configure
         conf_dict['app']['service_name'] = '{}'.format(app_config['service_name'])
         conf_dict['app']['setup_name'] = '{}'.format(app_config['setup_name'])
-    # Delete the config file
+    # Delete the base_conf file
     # os.remove(file_path)
 
-    # Write new config file with the same filename
+    # Write new base_conf file with the same filename
     print('Rewriting {}'.format(file_path))
     with open(file_path, 'w') as f2:
         json.dump(conf_dict, f2)

@@ -60,16 +60,18 @@ install_nginx_switch = conf.get("on-off", "nginx-node", fallback="off")
 base_nginx_dir = "/nginx"
 
 
-# if conf.has_section("nginx-config") and len(conf.items("nginx-config")) >= 1:
-#     base_nginx_dir = conf.get("nginx-config", "base_nginx_dir", fallback=base_nginx_dir)
+# if conf.has_section("nginx-base_conf") and len(conf.items("nginx-base_conf")) >= 1:
+#     base_nginx_dir = conf.get("nginx-base_conf", "base_nginx_dir", fallback=base_nginx_dir)
 
-# nginx-config
+# nginx-base_conf
 update_nginx_config = False
-if conf.has_section("nginx-config") and len(conf.items("nginx-config")) >= 1:
+if conf.has_section("nginx-base_conf") and len(conf.items("nginx-base_conf")) >= 1:
     update_nginx_config = True
 # nginx version
-nginx_version = conf.get("nginx-config", "version", fallback="1.10.3")
+nginx_version = conf.get("nginx-base_conf", "version", fallback="1.10.3")
 nginx_file_name = "nginx-{}".format(nginx_version)
+keepalived_version = conf.get("keepalived-base_conf", "version", fallback="1.3.5")
+keepalived_file_name = "keepalived-{}".format(keepalived_version)
 
 ############################### decorator for function tips ##############################
 import functools
@@ -398,7 +400,7 @@ def compile_nginx(path=None, filename=None):
         sudo(configure)
 
 
-    # ------------ 4.5 remote make and install_nginx start ----------
+# ------------ 4.5 remote make and install_nginx start ----------
 @task
 @parallel
 @function_tips()
@@ -471,7 +473,7 @@ def generate_nginx_server_conf(filename=None, server_port=None, delete=None):
             return
 
         nginx_server_tempfile = "../conf/template/nginx/nginx-server.template"
-        server_file = "../sources/sys_config/nginx/servers/{}".format(filename)
+        server_file = "../sources/sys_config/nginx/base_conf/{}".format(filename)
 
         if local("test -f {}".format(server_file)).failed:
             local("cp {} {}".format(nginx_server_tempfile, server_file))
@@ -503,7 +505,7 @@ def delete_local_nginx_server_conf(filename=None):
             print(red("filename error(length must >= 4)!"))
             return
 
-        server_file = "../sources/sys_config/nginx/servers/{}".format(filename)
+        server_file = "../sources/sys_config/nginx/base_conf/{}".format(filename)
 
         if local("test -f {}".format(server_file)).failed:
             return
@@ -565,7 +567,7 @@ def delete_nginx_server_config(filename=None):
 def config_nginx_server(filename=None):
     with settings(hide('running', 'stdout'), warn_only=True):
     # with settings(warn_only=True):
-        local_nginx_server_dir = "../sources/sys_config/nginx/servers"
+        local_nginx_server_dir = "../sources/sys_config/nginx/base_conf"
 
         servers_list = local("ls {} |awk '{{print $0}}'".format(local_nginx_server_dir), capture=True)
         servers_list = servers_list.split("\n")
@@ -725,6 +727,154 @@ def config_nginx_log_crontab(m=None, h=None, dom=None, mon=None, dow=None, user=
         sudo("sed -i /'{}'/d /etc/crontab".format(script_file_name))
         sudo("echo '{}' >> /etc/crontab".format(command))
         sudo("/etc/init.d/cron restart")
+
+
+# ----------------------------- Install keepalived start ------------------------------
+@runs_once
+@hosts("localhost")
+@task
+@function_tips()
+def download_keepalived(version=None, delete=None):
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        if not version:
+            version = keepalived_version
+            # version = "1.3.5"
+
+        if not version:
+            version = "1.3.5"
+
+        # check if exist the nginx-*.tar.gz
+        keepalived_app_name = "keepalived-{version}.tar.gz".format(version=version)
+        keepalived_app_dir = "../sources/software"
+
+        if delete:
+            local("rm -rf {}/{}".format(keepalived_app_dir, keepalived_app_name))
+
+        if local("test -f {}/{}".format(keepalived_app_dir, keepalived_app_name)).failed:
+            download_url = "http://www.keepalived.org/software/{}".format(keepalived_app_name)
+            local("wget '{}' -c -P {}/".format(download_url, keepalived_app_dir))
+        else:
+            print(red("{} already exist in {}".format(keepalived_app_name, keepalived_app_dir)))
+
+@task
+@parallel
+@function_tips()
+def install_keepalived_dependency():
+    # 安装nginx的依赖包 zlib pcre openssl（可以源码安装也可以直接系统安装）
+    with settings(hide('stdout'), warn_only=True):
+        sudo("apt-get install -y daemon")
+
+
+@task
+@parallel
+@function_tips()
+def send_keepalived(version=None, delete=None, decompress=True):
+    # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
+        if not version:
+            version = keepalived_version
+            # version = "1.3.5"
+
+        # check if exist the keepalived-*.tar.gz
+        keepalived_app_name = "keepalived-{version}.tar.gz".format(version=version)
+        keepalived_app_dir = "keepalived-{version}".format(version=version)
+        local_keepalived_app_dir = "../sources/software"
+        keepalived_dir = "~/keepalived"
+
+        if delete:
+            sudo("rm -rf {}".format(keepalived_dir))
+
+        if run("test -d {}".format(keepalived_dir)).failed:
+            sudo("mkdir -p {}".format(keepalived_dir), user=env.user, group=env.user)
+        put("{}/{}".format(local_keepalived_app_dir, keepalived_app_name), keepalived_dir, mode=0o644, use_sudo=True)
+
+        if decompress:
+            with cd("{}".format(keepalived_dir)):
+                sudo("tar -xvf {}".format(keepalived_app_name))
+                sudo("chown {0}:{0} -R {1}".format(env.user, keepalived_app_dir))
+
+
+@task
+@parallel
+@function_tips()
+def compile_keepalived(path=None, filename=None):
+    if not filename:
+        filename = keepalived_file_name
+    if not path:
+        path = "~/keepalived/{}".format(filename)
+    with cd("{}".format(path)):
+        print(yellow(path))
+        base_keepalived_dir = "/keepalived"
+
+        configure = "./configure " \
+                    "--prefix={0} ".format(base_keepalived_dir)
+        sudo(configure)
+
+
+@task
+@parallel
+@function_tips()
+def make_install_keepalived(filename=None):
+    if not filename:
+        filename = keepalived_file_name
+    path = "~/keepalived/{}".format(filename)
+    base_keepalived_dir = "/keepalived"
+
+    with cd("{}".format(path)):
+        sudo("rm -rf {base_keepalived_dir}".format(base_keepalived_dir=base_keepalived_dir))
+        sudo("mkdir -p {base_keepalived_dir}".format(base_keepalived_dir=base_keepalived_dir))
+
+        # keepalived related script
+        sudo("mkdir -p {base_keepalived_dir}/script".format(base_keepalived_dir=base_keepalived_dir))
+        sudo("make && make install")
+
+
+@task
+@parallel
+@function_tips()
+def config_keepalived_service(init_file=None):
+    with settings(warn_only=True):
+        # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        version = keepalived_version
+        target_file = "/etc/init.d/keepalived"
+        sudo("ln -sf /keepalived/sbin/keepalived /usr/sbin/")
+
+        if not init_file:
+            init_file = "../sources/sys_config/keepalived/base_conf/keepalived-init.sh"
+
+        if local("test -f {}".format(init_file)).failed:
+            print(red("{} not exist".format(init_file)))
+            return
+
+        sudo("rm -rf /etc/init.d/keepalived")
+        put(init_file, target_file, mode=0o755, use_sudo=True)
+        # sudo("cp ~/keepalived/keepalived-{}/keepalived/etc/init.d/keepalived /etc/init.d/".format(version))
+
+        sudo("sed -i s/'daemon.*keepalived.*'/'\/etc\/init.d\/nginx start \\n"
+             "\\tdaemon keepalived start'/g "
+             " /etc/init.d/keepalived")
+        sudo("sed -i s/'\/etc\/rc.d\/init.d\/functions'/'\/lib\/lsb\/init-functions'/ /etc/init.d/keepalived")
+
+        #  touch：cannot tounch /var/lock/subsys/sshd：no such file or directory
+        sudo("mkdir /var/lock/subsys")
+        sudo("sed -i '/mkdir \/var\/lock\/subsys/d' /etc/rc.local")
+        sudo("sed -i '/exit/i mkdir /var/lock/subsys' /etc/rc.local")
+
+        sudo("mkdir /etc/sysconfig")
+        sudo("mkdir /etc/keepalived")
+        sudo("cp -f /keepalived/etc/sysconfig/keepalived /etc/sysconfig/")
+        sudo("cp -f /keepalived/etc/keepalived/keepalived.conf /etc/keepalived/")
+
+        # sudo("update-rc.d -f keepalived remove")
+        sudo("update-rc.d -f keepalived defaults")
+        sudo("service keepalived restart")
+
+
+
+
+
+
+
 
 
 # ----------------------------- new user password update start ------------------------------
