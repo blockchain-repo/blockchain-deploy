@@ -46,6 +46,7 @@ num_pairs=$1
 NUM_NODES=$1
 
 python3 write_keypairs_file.py $num_pairs
+# 节点公钥备份
 UNICHAIN_NODE_KEYRING=../conf
 mkdir -p $UNICHAIN_NODE_KEYRING/keyring_bak
 if [ -f "$UNICHAIN_NODE_KEYRING/keyring" ]; then
@@ -53,13 +54,14 @@ if [ -f "$UNICHAIN_NODE_KEYRING/keyring" ]; then
     cp $UNICHAIN_NODE_KEYRING/keyring $UNICHAIN_NODE_KEYRING/keyring_bak/keyring_$datestr
 fi
 python3 unichain_keyrings_bak.py
-python3 clusterize_confiles.py -k $CONFDIR $NUM_NODES
+python3 modify_clusterize_confiles.py -k $CONFDIR $NUM_NODES
 
 # Send one of the config files to each instance
 for (( HOST=0 ; HOST<$NUM_NODES ; HOST++ )); do
     CONFILE="bcdb_conf"$HOST
     echo "Sending "$CONFILE
     fab set_host:$HOST send_confile:$CONFILE
+    fab -f fabfile_modify.py modify_node_confile
 done
 
 

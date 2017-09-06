@@ -6,6 +6,7 @@ set -e
 
 CUR_PATH=$(cd "$(dirname "$0")"; pwd)
 CLUSTER_CHAINNODES_CONF=${CUR_PATH}/../conf/blockchain_nodes
+MODIFY_NODES_CONF=${CUR_PATH}/../conf/modify_nodes
 
 source ./common_lib.sh
 
@@ -43,6 +44,15 @@ function get_cluster_nodes_num
 {
     local format="[a-zA-Z0-9_\-]+@[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+[ ]+[^ ]+"
     local nodes_num=`cat $CLUSTER_CHAINNODES_CONF|grep -vE "^#|^$"|grep -E "$format"|wc -l`
+    echo $nodes_num
+    return 0
+}
+
+#get nodes num from conf/blockchain_nodes
+function get_modify_nodes_num
+{
+    local format="[a-zA-Z0-9_\-]+@[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+[ ]+[^ ]+"
+    local nodes_num=`cat $MODIFY_NODES_CONF|grep -vE "^#|^$"|grep -E "$format"|wc -l`
     echo $nodes_num
     return 0
 }

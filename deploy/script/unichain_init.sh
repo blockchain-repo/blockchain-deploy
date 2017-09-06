@@ -28,7 +28,7 @@ use_git=false
 
 pack_local_code=false
 git_branch="dev"
-repo_url="https://git.oschina.net/uni-ledger/unichain.git"
+repo_url="http://36.110.71.170:99/unichain/unichain.git"
 
 # sources 下文件
 filename_app_tar_gz="unichain-archive.tar.gz"

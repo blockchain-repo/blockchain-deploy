@@ -8,23 +8,19 @@ UnichainDB, including its storage backend (RethinkDB).
 
 from __future__ import with_statement, unicode_literals
 import os
-from os import environ  # a mapping (like a dict)
-import sys
 
 import time
-import datetime
 import json
 
 from fabric.colors import red, green, blue, yellow, magenta, cyan
 from fabric.api import sudo, cd, env, hosts, local, runs_once
 from fabric.api import task, parallel
-from fabric.contrib.files import sed
 from fabric.operations import run, put, get, prompt
 from fabric.context_managers import settings, hide
 
 from configparser import ConfigParser
 
-from hostlist import public_dns_names,public_hosts,public_pwds,public_host_pwds, public_usernames
+from hostlist_modify import public_dns_names,public_hosts,public_pwds,public_host_pwds, public_usernames
 
 ################################ Fabric Initial Config Data  ######################################
 
@@ -374,6 +370,27 @@ def restart_rethinkdb():
         sudo("service rethinkdb restart")
         time.sleep(2)
         check_rethinkdb_run()
+
+@task
+def modify_node_confile():
+    """发送unichain配置文件"""
+    with settings(warn_only=True):
+        user = sudo("echo $HOME")
+        filepath = user + '/.unichain'
+        get(filepath, "./unichain_conf")
+        sudo('cp ~/.unichain ~/.unichain_bak')
+        local('python3 modify_node_confiles.py')
+        put('unichain_conf', "~/tempfile")
+        run('mv tempfile ~/.{}'.format('unichain'))
+
+@task
+def delete_node_confile():
+    """发送unichain配置文件"""
+    with settings(warn_only=True):
+        user = sudo("echo $HOME")
+        filepath = user + '/.unichain'
+        get(filepath, "./unichain_conf")
+        local('python3 delete_node_confiles.py')
 
 
 # what`s ?
@@ -1233,15 +1250,3 @@ def reconfig_unichain(service_name=None):
         run('mv tempfile ~/.{}'.format(service_name))
         print('For this node, {} show-base_conf says:'.format(service_name))
         run('{} show-base_conf'.format(service_name))
-
-#  修改节点配置文件
-@task
-def modify_node_confile():
-    """发送unichain配置文件"""
-    with settings(warn_only=True):
-        user = sudo("echo $HOME")
-        filepath = user + '/.unichain'
-        get(filepath, "./unichain_conf")
-        sudo('cp ~/.unichain ~/.unichain_bak')
-        local('python3 modify_node_confiles.py')
-        put('unichain_conf', "~/.unichain")
