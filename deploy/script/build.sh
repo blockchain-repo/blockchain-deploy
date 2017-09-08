@@ -35,6 +35,7 @@ Options:
                                 b.reconfigure rethinkdb|bigchaindb|unichain
                                 c.restart cluster nodes server
     server_check     after setup, check servers in cluster nodes are running
+    init_env         初始化各节点所需环境
     start_all        start all cluster nodes
     stop_all         stop  sll cluster nodes
     start_node       start signal cluster node
@@ -79,6 +80,9 @@ case $1 in
     start_all)
         ./clustercontrol.sh start | tee ../log/clustercontrol_start.log
         ./run_server_check.sh | tee ../log/run_server_check.log 
+    ;;
+    init_env)
+        ./init_node_env.sh  | tee ../log/init_node_env.log
     ;;
     stop_all)
         ./clustercontrol.sh stop | tee ../log/clustercontrol_stop.log

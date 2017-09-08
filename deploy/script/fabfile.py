@@ -302,14 +302,31 @@ def install_rethinkdb():
     with settings(warn_only=True):
         sudo("mkdir -p /data/rethinkdb")
         # install rethinkdb
-        sudo("source /etc/lsb-release && echo 'deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main' \
-        | sudo tee /etc/apt/trusty-sources.list.d/rethinkdb.list")
+        sudo('source /etc/lsb-release && echo "deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list')
         sudo("wget -qO- https://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -")
         sudo("apt-get update")
 
         sudo("apt-get -y install rethinkdb")
         # initialize rethinkdb data-dir
         sudo('rm -rf /data/rethinkdb/*')
+
+# # Install RethinkDB
+# @task
+# @parallel
+# @function_tips()
+# def install_rethinkdb():
+#     # with settings(hide('stdout'), warn_only=True):
+#     with settings(warn_only=True):
+#         sudo("mkdir -p /data/rethinkdb")
+#         # install rethinkdb
+#         sudo("source /etc/lsb-release && echo 'deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main' \
+#         | sudo tee /etc/apt/trusty-sources.list.d/rethinkdb.list")
+#         sudo("wget -qO- https://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -")
+#         sudo("apt-get update")
+#
+#         sudo("apt-get -y install rethinkdb")
+#         # initialize rethinkdb data-dir
+#         sudo('rm -rf /data/rethinkdb/*')
 
 
 # Configure RethinkDB
@@ -444,15 +461,16 @@ def seek_rethinkdb_join():
 @function_tips()
 def install_collectd():
     """Installation of Collectd"""
-    with settings(hide('running', 'stdout'), warn_only=True):
-        # sudo(
-        #     "echo 'deb http://http.debian.net/debian wheezy-backports-sloppy main contrib non-free' | sudo tee /etc/apt/trusty-sources.list.d/backports.list")
-        # # fixed the GPG Error
-        # sudo("gpg --keyserver pgpkeys.mit.edu --recv-key  8B48AD6246925553")
-        # sudo("gpg -a --export 8B48AD6246925553 | sudo apt-key add -")
-        # sudo("gpg --keyserver pgpkeys.mit.edu --recv-key  7638D0442B90D010")
-        # sudo("gpg -a --export 7638D0442B90D010 | sudo apt-key add -")
-        # sudo("apt-get update")
+    # with settings(hide('running', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
+        sudo("echo 'deb http://http.debian.net/debian wheezy-backports-sloppy main contrib non-free' | "
+             "sudo tee /etc/apt/trusty-sources.list.d/backports.list")
+        # fixed the GPG Error
+        sudo("gpg --keyserver pgpkeys.mit.edu --recv-key  8B48AD6246925553")
+        sudo("gpg -a --export 8B48AD6246925553 | sudo apt-key add -")
+        sudo("gpg --keyserver pgpkeys.mit.edu --recv-key  7638D0442B90D010")
+        sudo("gpg -a --export 7638D0442B90D010 | sudo apt-key add -")
+        sudo("apt-get update")
         try:
             sudo("apt-get install -y --force-yes -t wheezy-backports-sloppy collectd")
         except:
