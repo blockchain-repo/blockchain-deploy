@@ -553,7 +553,8 @@ def create_new_user(node_info_new_user_section="node-info-new-user"):
 @parallel
 @function_tips()
 def node_apt_update(switch=None):
-    with settings(hide('warnings', 'stdout'), warn_only=True):
+    # with settings(hide('warnings', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
         if not switch:
             switch = apt_pip_update_boolean
 
@@ -571,7 +572,8 @@ def node_apt_update(switch=None):
 @parallel
 @function_tips()
 def update_node_apt(switch=None, source=None, codename=None, bak_file=None, bak_filename=None):
-    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
         # print(blue("{} update node apt start ...".format(env.host_string)))
         if not switch:
             switch = apt_sources_boolean
@@ -603,7 +605,8 @@ def update_node_apt(switch=None, source=None, codename=None, bak_file=None, bak_
 @parallel
 @function_tips()
 def update_node_third_apt(switch=None):
-    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    with settings( warn_only=True):
         # print(blue("{} update node third apt start ...".format(env.host_string)))
         if not switch:
             switch = third_apt_sources_boolean
@@ -616,7 +619,8 @@ def update_node_third_apt(switch=None):
 
             #TODO collectd
             sudo("echo 'deb http://http.debian.net/debian wheezy-backports-sloppy main contrib non-free' "
-                 "| sudo tee /etc/apt/trusty-sources.list.d/backports.list")
+                 "| sudo tee /etc/apt/sources.list.d/backports.list")
+                 # "| sudo tee /etc/apt/trusty-sources.list.d/backports.list")
             # fixed the GPG Error
             sudo("gpg --keyserver pgpkeys.mit.edu --recv-key  8B48AD6246925553")
             sudo("gpg -a --export 8B48AD6246925553 | sudo apt-key add -")
@@ -633,7 +637,8 @@ def update_node_third_apt(switch=None):
 @parallel
 @function_tips()
 def update_node_pip(switch=None, source=None, bak_file=None, bak_filename=None):
-    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    with settings( warn_only=True):
         if not switch:
             switch = pip_sources_boolean
         if not source:
@@ -663,7 +668,8 @@ def update_node_pip(switch=None, source=None, bak_file=None, bak_filename=None):
 @function_tips()
 def install_base_software(switch=None):
     # python pip3 :
-    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+    with settings( warn_only=True):
         # This deletes the dir where "apt-get update" stores the list of packages
         # sudo('rm -rf /var/lib/apt/lists/')
         # # Re-create that directory, and its subdirectory named "partial"

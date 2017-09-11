@@ -6,4 +6,6 @@
 
 # next line should be leave and remain one blank line it!!!
 #all nodes as follow:
-wsp@192.168.80.80:22 wsp
+wsp@192.168.80.78:22 wsp
+wsp@192.168.80.79:22 wsp
+

@@ -70,9 +70,9 @@ fab init_all_nodes:shred=True,times=1,show=False,config_del=True
 
 #collectd install&configure
 echo -e "[INFO]==========install collectd========="
-fab install_collectd
+#fab install_collectd
 echo -e "[INFO]==========configure collectd========="
-./configure_collectd.sh
+#./configure_collectd.sh
 
 #rethinkdb install&configure
 echo -e "[INFO]==========install  rethinkdb=========="

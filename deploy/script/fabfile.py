@@ -300,6 +300,7 @@ def kill_all_nodes(service_name=None):
 def install_rethinkdb():
     # with settings(hide('stdout'), warn_only=True):
     with settings(warn_only=True):
+        sudo("dpkg --configure -a")
         sudo("mkdir -p /data/rethinkdb")
         # install rethinkdb
         sudo('source /etc/lsb-release && echo "deb http://download.rethinkdb.com/apt $DISTRIB_CODENAME main" | sudo tee /etc/apt/sources.list.d/rethinkdb.list')
@@ -464,7 +465,7 @@ def install_collectd():
     # with settings(hide('running', 'stdout'), warn_only=True):
     with settings(warn_only=True):
         sudo("echo 'deb http://http.debian.net/debian wheezy-backports-sloppy main contrib non-free' | "
-             "sudo tee /etc/apt/trusty-sources.list.d/backports.list")
+             "sudo tee /etc/apt/sources.list.d/backports.list")
         # fixed the GPG Error
         sudo("gpg --keyserver pgpkeys.mit.edu --recv-key  8B48AD6246925553")
         sudo("gpg -a --export 8B48AD6246925553 | sudo apt-key add -")
@@ -521,6 +522,7 @@ def stop_collectd():
 def install_localdb():
     # leveldb & plyvel install
     with settings(hide('running', 'stdout'), warn_only=True):
+        sudo('dpkg --configure -a')
         sudo('apt-get install -y libleveldb1 libleveldb-dev libsnappy1 libsnappy-dev')
         sudo('apt-get -y -f install')
         sudo('pip3 install plyvel==0.9')
@@ -570,7 +572,8 @@ def send_confile(confile, service_name=None):
 @parallel
 @function_tips()
 def install_unichain_from_archive(service_name=None, setup_name=None):
-    with settings(hide('running', 'stdout'), warn_only=True):
+    # with settings(hide('running', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
         if not setup_name:
@@ -1262,4 +1265,18 @@ def modify_node_confile():
         get(filepath, "./unichain_conf")
         sudo('cp ~/.unichain ~/.unichain_bak')
         local('python3 modify_node_confiles.py')
+        put('unichain_conf', "~/.unichain")
+
+
+#  修改节点配置文件
+@task
+def update_unichain_config(host_index):
+    """发送unichain配置文件"""
+    with settings(warn_only=True):
+        node_ip = public_hosts[int(host_index)]
+        user = sudo("echo $HOME")
+        filepath = user + '/.unichain'
+        get(filepath, "./unichain_conf")
+        sudo('cp ~/.unichain ~/.unichain_bak')
+        local('python3 update_node_confiles.py {}'.format(node_ip))
         put('unichain_conf', "~/.unichain")

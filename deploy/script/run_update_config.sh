@@ -53,9 +53,9 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 echo -e "[INFO]==========check cluster conf diff=========="
 #check_blocknodes_diff
 
-#generate the unichain-archive.tar.gz
-echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
-./unichain_init.sh -p
+##generate the unichain-archive.tar.gz
+#echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
+#./unichain_init.sh -p
 
 echo -e "[INFO]=========check control machine deploy files is ok!========="
 ./run_pre_check.sh
@@ -68,13 +68,8 @@ echo -e "[INFO]==========bak old conf=========="
 echo -e "[INFO]==========stop clusternodes=========="
 ./clustercontrol.sh stop
 
-#collectd&rethinkdb&unichain reconfigure
-echo -e "[INFO]==========configure collectd=========="
-#./configure_collectd.sh
 echo -e "[INFO]==========configure rethinkdb=========="
 ./configure_rethinkdb.sh
-echo -e "[INFO]==========reinstall chain=========="
-./install_unichain_archive.sh "local_tar_gz"
 echo -e "[INFO]==========configure unchain=========="
 ./update_unichain.sh ${CLUSTER_BIGCHAIN_COUNT}
 

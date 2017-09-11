@@ -64,16 +64,19 @@ echo -e "[INFO]=========init control machine env========="
 
 
 echo -e "[INFO]==========configure  rethinkdb=========="
-./modify_rethinkdb.sh
+fab -f fabfile_modify.py stop_rethinkdb
+./configure_rethinkdb.sh
 
 echo -e "[INFO]=========configure unichain========="
+fab -f fabfile_modify.py stop_unichain
 fab -f fabfile_modify.py delete_node_confile
 fab modify_node_confile
-echo -e "[INFO]==========set shards unichain=========="
-fab set_shards:${CLUSTER_BIGCHAIN_COUNT}
+
 echo -e "[INFO]==========set replicas unichain=========="
 REPLICAS_NUM=`gen_replicas_num ${CLUSTER_BIGCHAIN_COUNT}`
-fab set_replicas:${ALL_NODES}
+fab set_replicas:${CLUSTER_BIGCHAIN_COUNT}
+echo -e "[INFO]==========set shards unichain=========="
+fab set_shards:${CLUSTER_BIGCHAIN_COUNT}
 
 #bak conf
 echo -e "[INFO]==========bak current conf=========="

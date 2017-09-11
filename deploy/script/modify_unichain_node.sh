@@ -78,9 +78,9 @@ fab init_all_nodes:shred=True,times=1,show=False,config_del=True
 
 #collectd install&configure
 echo -e "[INFO]==========install collectd========="
-fab install_collectd
+#fab install_collectd
 echo -e "[INFO]==========configure collectd========="
-./configure_collectd.sh
+#./configure_collectd.sh
 
 #rethinkdb install&configure
 echo -e "[INFO]==========install  rethinkdb=========="
@@ -98,7 +98,7 @@ fab init_localdb
 echo -e "[INFO]==========install unichain=========="
 ./install_unichain_archive.sh "local_tar_gz"
 
-echo -e "[INFO]=========configure unichain========="
+echo -e "[INFO]=========modify unichain========="
 ./modify_unichain.sh ${CLUSTER_BIGCHAIN_COUNT}
 
 echo -e "[INFO]==========set shards unichain=========="

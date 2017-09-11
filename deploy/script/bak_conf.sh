@@ -19,7 +19,7 @@ case $1 in
         bak_old_base_path=${BAK_BASE_PATH}/${date_str}/conf
         cp -rf ../conf/blockchain_nodes ${bak_old_base_path}/cluster/ 2>/dev/null
         fab bak_rethinkdb_conf:"${bak_old_base_path}"
-        fab bak_collected_conf:"${bak_old_base_path}" 
+#        fab bak_collected_conf:"${bak_old_base_path}"
         fab bak_unichain_conf:"${bak_old_base_path}" 
     ;;
     "new")
@@ -27,7 +27,7 @@ case $1 in
         bak_new_base_path=${BAK_BASE_PATH}/now/conf
         cp -rf ../conf/blockchain_nodes ${bak_new_base_path}/cluster/ 2>/dev/null
         fab bak_rethinkdb_conf:"${bak_new_base_path}"
-        fab bak_collected_conf:"${bak_new_base_path}" 
+#        fab bak_collected_conf:"${bak_new_base_path}"
         fab bak_unichain_conf:"${bak_new_base_path}" 
     ;;
 esac 
