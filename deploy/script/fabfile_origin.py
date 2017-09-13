@@ -571,6 +571,17 @@ def node_apt_update(switch=None):
 @task
 @parallel
 @function_tips()
+def node_apt_dpkg_update(switch=None):
+    # with settings(hide('warnings', 'stdout'), warn_only=True):
+    with settings(warn_only=True):
+        sudo("apt-get update")
+        sudo('apt-get -f install')
+        sudo("dpkg --configure -a")
+
+
+@task
+@parallel
+@function_tips()
 def update_node_apt(switch=None, source=None, codename=None, bak_file=None, bak_filename=None):
     # with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
     with settings(warn_only=True):
@@ -590,7 +601,8 @@ def update_node_apt(switch=None, source=None, codename=None, bak_file=None, bak_
             if source:
                 file_path = "../sources/sys_config/apt_pip/{}".format(source)
             else:
-                file_path = "../sources/sys_config/apt_pip/{}-sources.list".format(codename)
+                file_path = "../sources/sys_config/apt_pip/sources.list".format(codename)
+                # file_path = "../sources/sys_config/apt_pip/{}-sources.list".format(codename)
             if bak_file:
                 sudo("cp -f /etc/apt/sources.list /etc/apt/{} 2>/dev/null".format(bak_filename))
             sudo("echo update the node {} sources.list".format(env.host))
@@ -614,7 +626,8 @@ def update_node_third_apt(switch=None):
         if switch:
             #TODO rethinkdb
             sudo("echo 'deb http://download.rethinkdb.com/apt trusty main' | "
-                 "sudo tee /etc/apt/trusty-sources.list.d/rethinkdb.list")
+                 "sudo tee /etc/apt/sources.list.d/rethinkdb.list")
+                 # "sudo tee /etc/apt/trusty-sources.list.d/rethinkdb.list")
             sudo("wget -qO- http://download.rethinkdb.com/apt/pubkey.gpg | sudo apt-key add -")
 
             #TODO collectd

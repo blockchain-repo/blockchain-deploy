@@ -5,13 +5,13 @@
 set -e
 
 # 1. update_node apt, third apt
-echo -e "[INFO]========== 3. update_node apt, third apt =========="
-fab -f fabfile_origin.py node_apt_update
+echo -e "[INFO]========== 1. update_node apt, third apt =========="
+fab -f fabfile_origin.py node_apt_dpkg_update
 
 # 2. install_base_software
-echo -e "[INFO]========== 4. install_base_software =========="
+echo -e "[INFO]========== 2. install_base_software =========="
 fab -f fabfile_origin.py install_base_software
 
 # 3. sync_zone_datetime
-echo -e "[INFO]========== 5. sync_zone_datetime =========="
+echo -e "[INFO]========== 3. sync_zone_datetime =========="
 fab -f fabfile_origin.py sync_zone_datetime

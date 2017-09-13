@@ -23,6 +23,18 @@ fi
 source ./blockchain_nodes_conf_util.sh
 source ./common_lib.sh
 
+CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
+[ $CLUSTER_BIGCHAIN_COUNT -eq 0 ] && {
+    echo -e "[ERROR] blockchain_nodes num is 0"
+    exit 1
+}
+
+MODIFY_NODES_COUNT=`get_modify_nodes_num`
+[ $MODIFY_NODES_COUNT -eq 0 ] && {
+    echo -e "[ERROR] modify_nodes num is 0"
+    exit 1
+}
+
 ##check blocknodes_conf format
 echo -e "[INFO]==========check cluster nodes conf=========="
 check_cluster_nodes_conf || {
@@ -43,18 +55,6 @@ else
     echo -e "[ERROR]=========first_setup aborted==========="
     exit 1
 fi
-
-CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
-[ $CLUSTER_BIGCHAIN_COUNT -eq 0 ] && {
-    echo -e "[ERROR] blockchain_nodes num is 0"
-    exit 1
-}
-
-MODIFY_NODES_COUNT=`get_modify_nodes_num`
-[ $MODIFY_NODES_COUNT -eq 0 ] && {
-    echo -e "[ERROR] modify_nodes num is 0"
-    exit 1
-}
 
 ALL_NODES=$[$CLUSTER_BIGCHAIN_COUNT+$MODIFY_NODES_COUNT]
 
@@ -111,11 +111,19 @@ fab set_replicas:${ALL_NODES}
 #bak conf
 echo -e "[INFO]==========bak current conf=========="
 ./bak_conf.sh "new"
-
+rm keypairs.py
 if [[ -z $AUTO_START_FLAG || $AUTO_START_FLAG -eq 1 ]];then
     #start unichain nodes
     echo -e "[INFO]==========start unichain nodes=========="
-    ./modify_clustercontrol.sh start
+    echo -e "[INFO]==========start cluster unichain...=========="
+    for (( i=0; i<$CLUSTER_BIGCHAIN_COUNT; i++ )); do
+            fab set_host:$i stop_unichain
+            fab set_host:$i start_unichain
+    done
+    for (( i=0; i<$MODIFY_NODES_COUNT; i++ )); do
+            fab -f fabfile_modify.py set_host:$i stop_unichain
+            fab -f fabfile_modify.py set_host:$i start_unichain
+    done
     ./modify_run_server_check.sh
 else
     fab stop_rethinkdb

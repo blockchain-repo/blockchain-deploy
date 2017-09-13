@@ -195,6 +195,8 @@ def init_all_nodes(service_name=None, setup_name=None, shred=False, times=3, sho
         sudo('killall -9 collectd 2>/dev/null')
         sudo('killall -9 pip 2>/dev/null')
         sudo('killall -9 pip3 2>/dev/null')
+        sudo('apt-get -f install')
+        sudo("dpkg --configure -a")
 
         if shred is True:
             if not times or int(times) <= 1:
@@ -344,6 +346,20 @@ def configure_rethinkdb():
             use_sudo=True)
         # finally restart instance
         sudo('/etc/init.d/rethinkdb restart')
+
+
+# Configure RethinkDB
+@task
+@parallel
+@function_tips()
+def send_configure_rethinkdb():
+    """Configure of RethinkDB"""
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        # copy base_conf file to target system
+        put('../conf/rethinkdb.conf',
+            '/etc/rethinkdb/instances.d/default.conf',
+            mode=0o600,
+            use_sudo=True)
 
 
 # delete the disk data for rethinkdb in /data/rethinkdb/*

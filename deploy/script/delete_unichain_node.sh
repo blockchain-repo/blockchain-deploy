@@ -23,6 +23,18 @@ fi
 source ./blockchain_nodes_conf_util.sh
 source ./common_lib.sh
 
+CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
+[ $CLUSTER_BIGCHAIN_COUNT -eq 0 ] && {
+    echo -e "[ERROR] blockchain_nodes num is 0"
+    exit 1
+}
+
+MODIFY_NODES_COUNT=`get_modify_nodes_num`
+[ $MODIFY_NODES_COUNT -eq 0 ] && {
+    echo -e "[ERROR] modify_nodes num is 0"
+    exit 1
+}
+
 ##check blocknodes_conf format
 echo -e "[INFO]==========check cluster nodes conf=========="
 check_cluster_nodes_conf || {
@@ -44,18 +56,6 @@ else
     exit 1
 fi
 
-CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
-[ $CLUSTER_BIGCHAIN_COUNT -eq 0 ] && {
-    echo -e "[ERROR] blockchain_nodes num is 0"
-    exit 1
-}
-
-MODIFY_NODES_COUNT=`get_modify_nodes_num`
-[ $MODIFY_NODES_COUNT -eq 0 ] && {
-    echo -e "[ERROR] modify_nodes num is 0"
-    exit 1
-}
-
 ALL_NODES=$[$CLUSTER_BIGCHAIN_COUNT-$MODIFY_NODES_COUNT]
 
 #init env:python3 fabric3
@@ -65,7 +65,7 @@ echo -e "[INFO]=========init control machine env========="
 
 echo -e "[INFO]==========configure  rethinkdb=========="
 fab -f fabfile_modify.py stop_rethinkdb
-./configure_rethinkdb.sh
+configure_rethinkdb_norestart.sh
 
 echo -e "[INFO]=========configure unichain========="
 fab -f fabfile_modify.py stop_unichain
@@ -85,7 +85,10 @@ echo -e "[INFO]==========bak current conf=========="
 if [[ -z $AUTO_START_FLAG || $AUTO_START_FLAG -eq 1 ]];then
     #start unichain nodes
     echo -e "[INFO]==========start unichain nodes=========="
-    ./clustercontrol.sh start
+    for (( i=0; i<$CLUSTER_BIGCHAIN_COUNT; i++ )); do
+            fab set_host:$i stop_unichain
+            fab set_host:$i start_unichain
+    done
     ./run_server_check.sh
 else
     fab stop_rethinkdb

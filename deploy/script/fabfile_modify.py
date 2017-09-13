@@ -324,6 +324,20 @@ def configure_rethinkdb():
         sudo('/etc/init.d/rethinkdb restart')
 
 
+# Configure RethinkDB
+@task
+@parallel
+@function_tips()
+def send_configure_rethinkdb():
+    """Configure of RethinkDB"""
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        # copy base_conf file to target system
+        put('../conf/rethinkdb.conf',
+            '/etc/rethinkdb/instances.d/default.conf',
+            mode=0o600,
+            use_sudo=True)
+
+
 # delete the disk data for rethinkdb in /data/rethinkdb/*
 @task
 @parallel

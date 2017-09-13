@@ -66,13 +66,13 @@ echo -e "[INFO]==========bak old conf=========="
 
 #clusternodes stop
 echo -e "[INFO]==========stop clusternodes=========="
-./clustercontrol.sh stop
+#./clustercontrol.sh stop
 
 #collectd&rethinkdb&unichain reconfigure
 echo -e "[INFO]==========configure collectd=========="
 #./configure_collectd.sh
 echo -e "[INFO]==========configure rethinkdb=========="
-./configure_rethinkdb.sh
+./configure_rethinkdb_norestart.sh
 echo -e "[INFO]==========reinstall chain=========="
 ./install_unichain_archive.sh "local_tar_gz"
 echo -e "[INFO]==========configure unchain=========="
@@ -89,7 +89,10 @@ echo -e "[INFO]==========bak new conf=========="
 if [[ -z $AUTO_START_FLAG || $AUTO_START_FLAG -eq 1 ]];then
     #start unichain nodes
     echo -e "[INFO]==========start unichain nodes=========="
-    ./clustercontrol.sh start
+    for (( i=0; i<$CLUSTER_BIGCHAIN_COUNT; i++ )); do
+            fab set_host:$i stop_unichain
+            fab set_host:$i start_unichain
+    done
     ./run_server_check.sh
 fi
 
