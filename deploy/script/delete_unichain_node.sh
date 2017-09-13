@@ -65,7 +65,7 @@ echo -e "[INFO]=========init control machine env========="
 
 echo -e "[INFO]==========configure  rethinkdb=========="
 fab -f fabfile_modify.py stop_rethinkdb
-configure_rethinkdb_norestart.sh
+./configure_rethinkdb_norestart.sh
 
 echo -e "[INFO]=========configure unichain========="
 fab -f fabfile_modify.py stop_unichain

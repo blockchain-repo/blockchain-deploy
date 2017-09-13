@@ -50,6 +50,37 @@ function check_fabric_3
     return 1
 }
 
+function check_docker
+{
+    local docker_version=`docker --version|grep -i "Docker version"`
+    if [ ! -z "$docker_version" ];then
+        echo $docker_version
+        return 0
+    fi
+    return 1
+}
+
+function check_docker_compose
+{
+    local docker_compose_version=`docker-compose --version|grep -i "docker-compose version"`
+    if [ ! -z "$docker_compose_version" ];then
+        echo $docker_compose_version
+        return 0
+    fi
+    return 1
+}
+
+function check_collectd
+{
+    local collectd_process=`ps -e |grep collectd`
+    if [ ! -z "$collectd_process" ];then
+        echo $collectd_process
+        return 0
+    fi
+    return 1
+}
+
+
 #check_python_3
 #echo $?
 #check_fabric_3

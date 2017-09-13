@@ -824,6 +824,40 @@ def check_rethinkdb():
         else:
             print("[ERROR]=====http_port[%s] detect result: is used!" % (http_port))
 
+@task
+@function_tips()
+def check_hardinfo():
+    with settings(warn_only=True):
+        if run("test -d ~/uni_ledger_unichain/unichain_docker_init/pre_check").failed:
+            sudo("mkdir -p ~/uni_ledger_unichain/unichain_docker_init/pre_check")
+            sudo("chown -R " + env.user + ':' + env.user + ' ~/uni_ledger_unichain/unichain_docker_init/pre_check')
+        with cd("~/uni_ledger_unichain/unichain_docker_init/pre_check"):
+            put("./check_env_hardinfo.sh","~/uni_ledger_unichain/unichain_docker_init/pre_check/check_env_hardinfo.sh",mode=0o644,
+            use_sudo=True)
+            sudo("chmod +x check_env_hardinfo.sh")
+            sudo("bash check_env_hardinfo.sh")
+
+
+@task
+@function_tips()
+def check_env_software():
+    with settings(warn_only=True):
+        if run("test -d ~/uni_ledger_unichain/unichain_docker_init/pre_check").failed:
+            sudo("mkdir -p ~/uni_ledger_unichain/unichain_docker_init/pre_check")
+            sudo(
+                "chown -R " + env.user + ':' + env.user + ' ~/uni_ledger_unichain/unichain_docker_init/pre_check')
+        with cd("~/uni_ledger_unichain/unichain_docker_init/pre_check"):
+            put("./check_tools_util.sh",
+                "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_tools_util.sh", mode=0o644,
+                use_sudo=True)
+            put("./check_env_software.sh",
+                "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_env_software.sh", mode=0o644,
+                use_sudo=True)
+            sudo("chmod +x check_tools_util.sh check_env_software.sh")
+            local("bash check_env_fabric3.sh")
+            sudo("bash check_env_software.sh")
+
+
 #step:check port&process&data,conf path
 @task
 @function_tips()
@@ -1296,3 +1330,4 @@ def update_unichain_config(host_index):
         sudo('cp ~/.unichain ~/.unichain_bak')
         local('python3 update_node_confiles.py {}'.format(node_ip))
         put('unichain_conf', "~/.unichain")
+
