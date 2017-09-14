@@ -4,6 +4,10 @@
 # if any command has a non-zero exit status
 set -e
 
+# 0. init control
+echo -e "[INFO]========== init control =========="
+./run_init_env.sh
+
 # 1. update_node apt, third apt
 echo -e "[INFO]========== 1. update_node apt, third apt =========="
 fab -f fabfile_origin.py node_apt_dpkg_update

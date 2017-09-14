@@ -2,6 +2,10 @@
 
 set -e
 
+#check control
+echo -e "[INFO]==========check control=========="
+./check_env_fabric3.sh
+
 #check hardinfo
 echo -e "[INFO]==========check hardinfo=========="
 fab check_hardinfo
