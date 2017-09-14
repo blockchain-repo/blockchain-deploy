@@ -12,9 +12,3 @@ echo -e "[INFO]=======check fabric_3 end======="
 echo -e " "
 
 
-if [ -z "$fabric_3" ] ;then
-    echo "ready go!"
-else
-    echo "please install fabric tools"
-fi
-
