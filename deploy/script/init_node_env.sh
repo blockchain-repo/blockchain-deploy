@@ -10,7 +10,7 @@ echo -e "[INFO]========== init control =========="
 
 # 1. update_node apt, third apt
 echo -e "[INFO]========== 1. update_node apt, third apt =========="
-fab -f fabfile_origin.py node_apt_dpkg_update
+fab -f fabfile_origin.py node_apt_update
 
 # 2. install_base_software
 echo -e "[INFO]========== 2. install_base_software =========="

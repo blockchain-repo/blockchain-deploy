@@ -840,22 +840,23 @@ def check_hardinfo():
 
 @task
 @function_tips()
-def check_env_software():
+def check_node_info():
     with settings(warn_only=True):
         if run("test -d ~/uni_ledger_unichain/unichain_docker_init/pre_check").failed:
             sudo("mkdir -p ~/uni_ledger_unichain/unichain_docker_init/pre_check")
             sudo(
                 "chown -R " + env.user + ':' + env.user + ' ~/uni_ledger_unichain/unichain_docker_init/pre_check')
         with cd("~/uni_ledger_unichain/unichain_docker_init/pre_check"):
-            put("./check_tools_util.sh",
-                "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_tools_util.sh", mode=0o644,
+            hostname=sudo("hostname")
+            user=sudo("echo $HOME")
+            filepath = user + "/uni_ledger_unichain/unichain_docker_init/pre_check/env_node_{}".format(hostname)
+            sudo("rm {}".format(filepath))
+            put("./check_env_node.sh",
+                "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_env_node.sh", mode=0o644,
                 use_sudo=True)
-            put("./check_env_software.sh",
-                "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_env_software.sh", mode=0o644,
-                use_sudo=True)
-            sudo("chmod +x check_tools_util.sh check_env_software.sh")
-            local("bash check_env_fabric3.sh")
-            sudo("bash check_env_software.sh")
+            sudo("chmod +x check_env_node.sh")
+            sudo("bash check_env_node.sh")
+            get(filepath, "../report/env_node_{}".format(hostname), use_sudo=True)
 
 
 #step:check port&process&data,conf path

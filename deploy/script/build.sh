@@ -67,7 +67,7 @@ case $1 in
         usage
     ;;
     env_check)
-        ./run_env_check.sh | tee ../log/run_env_check.sh
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     first_setup)
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`

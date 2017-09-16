@@ -40,6 +40,16 @@ function get_python_bin_path
     return 0
 }
 
+function check_pip_3
+{
+    local pip_3_version=`pip3 --version|grep -i "/usr/local/"`
+    if [ ! -z "$pip_3_version" ];then
+        echo $pip_3_version
+        return 0
+    fi
+    return 1
+}
+
 function check_fabric_3
 {
     local fab_version=`fab --version|grep -i "fabric3"`

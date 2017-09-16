@@ -17,21 +17,24 @@ memory=`cat /proc/meminfo|grep "MemTotal"|awk '{print $2}'`
 net_number=`cat /proc/net/dev|grep "eth"|wc -l`
 #获取磁盘容量
 disk=`fdisk -l|head -2|awk '{print $3}'|sed /^$/d`
-
-echo   "系统操作信息：$system"
-echo   " "
-echo   "内核版本：$kernel"
-echo   " "
-echo   "cpu数量：$cpu_number 个"
-echo   " "
-echo   "cpu物理核心数：$cpu_kernel 个"
-echo   " "
-echo   "cpu逻辑核心数：$cpu_thread 个"
-echo   " "
-echo   "内存容量：$memory_g KB"
-echo   " "
-echo   "网卡数量：$net_number 个"
-echo   " "
-echo   "磁盘容量：$disk GB"
+#获取该节点主机名
+hostaname=`hostname`
+echo   "$hostaname 硬件信息报告：" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "系统操作信息：$system" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "内核版本：$kernel" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "cpu数量：$cpu_number 个" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "cpu物理核心数：$cpu_kernel 个" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "cpu逻辑核心数：$cpu_thread 个" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "内存容量：$memory_g KB" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "网卡数量：$net_number 个" >> env_node_$hostaname
+echo   " " >> env_node_$hostaname
+echo   "磁盘容量：$disk GB" >> env_node_$hostaname
 
 exit 0

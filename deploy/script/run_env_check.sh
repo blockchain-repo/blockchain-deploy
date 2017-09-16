@@ -1,29 +1,34 @@
 #!/bin/bash
 
 set -e
+env_check_report="env_check_report"
+report="../report"
+if [ "`ls -A $report`"="" ];then
+    rm -rf ../report/*
+fi
 
+if [ -d "$env_check_report" ];then
+    rm -f $env_check_report
+fi
 #check control
 echo -e "[INFO]==========check control=========="
-./check_env_fabric3.sh
+./check_env_master.sh
 
-#check hardinfo
-echo -e "[INFO]==========check hardinfo=========="
-fab check_hardinfo
+##check hardinfo
+#echo -e "[INFO]==========check node info=========="
+fab check_node_info
+touch $env_check_report
+hostname=`hostname`
+for file in ../report/*
+do
+    if test -f $file
+    then
+        cat $file | while read LINE
+        do
+            echo $LINE >> $env_check_report
+        done
+    fi
+done
 
-#check python3  collectd fabric3
-echo -e "[INFO]==========check python3 fabric3 and collectd=========="
-fab check_env_software
-
-#check rethinkdb
-echo -e "[INFO]==========check rethinkdb=========="
-fab check_rethinkdb
-
-##check localdb
-#echo -e "[INFO]==========check localdb=========="
-#fab check_localdb
-
-#check unichain-pro
-echo -e "[INFO]==========check unichain pro=========="
-fab check_unichain
-
+mv $env_check_report ../report/
 exit 0
