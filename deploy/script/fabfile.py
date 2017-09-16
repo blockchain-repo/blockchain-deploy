@@ -1332,3 +1332,14 @@ def update_unichain_config(host_index):
         local('python3 update_node_confiles.py {}'.format(node_ip))
         put('unichain_conf', "~/.unichain")
 
+#  获取所有节点log
+@task
+@function_tips()
+def get_logs(service_name=None):
+    if not service_name:
+        service_name = _service_name
+    with settings(warn_only=True):
+        user = sudo("echo $HOME")
+        filepath = user + '/unichain-log/'
+        get(filepath, "/tmp/remote_log/{}/".format(env.host))
+
