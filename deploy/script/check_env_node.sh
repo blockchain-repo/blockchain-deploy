@@ -145,7 +145,7 @@ if [ -z "$collectd_version" ];then
     echo   " " >>  env_node_$hostaname
 else
     echo "Collectd Has been installed"
-    echo   "collectd：未安装" >> env_node_$hostaname
+    echo   "collectd：已安装" >> env_node_$hostaname
     echo   " " >>  env_node_$hostaname
 fi
 echo -e "[INFO]=======check docker end======="
