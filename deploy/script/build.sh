@@ -72,52 +72,66 @@ case $1 in
     first_setup)
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./run_first_setup.sh $str_param | tee ../log/run_first_setup.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     update)
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./run_update.sh $str_param | tee ../log/run_update.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     server_check)
         ./run_server_check.sh | tee ../log/run_server_check.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     start_all)
         ./clustercontrol.sh start | tee ../log/clustercontrol_start.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
         ./run_server_check.sh | tee ../log/run_server_check.log 
     ;;
     update_config)
         ./run_update_config.sh  | tee ../log/run_update_config.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     init_env)
         ./init_node_env.sh  | tee ../log/init_node_env.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     add_node)
         ./modify_unichain_node.sh  | tee ../log/modify_unichain_node.log
+        ./add_run_env_check.sh | tee ../log/add_run_env_check.log
     ;;
     delete_node)
         ./delete_unichain_node.sh  | tee ../log/delete_unichain_node.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     stop_all)
         ./clustercontrol.sh stop | tee ../log/clustercontrol_stop.log
         ./run_server_check.sh | tee ../log/run_server_check.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     start_node)
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./startnode.sh $str_param | tee ../log/startnode.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     stop_node)
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./stopnode.sh $str_param | tee ../log/stopnode.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     install_node)
         str_param=`echo $@|awk '{for(i=3;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./install_node.sh $str_param | tee ../log/install_node.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     uninstall)
         ./run_uninstall.sh | tee ../log/uninstall.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     unichain_init)
          str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./unichain_init.sh $str_param | tee ../log/unichain_init.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     *)
         usage

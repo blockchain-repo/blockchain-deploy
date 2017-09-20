@@ -52,6 +52,7 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 
 #init env:python3 fabric3
 echo -e "[INFO]=========init control machine env========="
+./init_node_env.sh
 ./run_init_env.sh
 
 #generate the unichain-archive.tar.gz

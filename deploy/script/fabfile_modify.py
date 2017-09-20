@@ -1264,3 +1264,24 @@ def reconfig_unichain(service_name=None):
         run('mv tempfile ~/.{}'.format(service_name))
         print('For this node, {} show-base_conf says:'.format(service_name))
         run('{} show-base_conf'.format(service_name))
+
+
+@task
+@function_tips()
+def check_node_info():
+    with settings(warn_only=True):
+        if run("test -d ~/uni_ledger_unichain/unichain_docker_init/pre_check").failed:
+            sudo("mkdir -p ~/uni_ledger_unichain/unichain_docker_init/pre_check")
+            sudo(
+                "chown -R " + env.user + ':' + env.user + ' ~/uni_ledger_unichain/unichain_docker_init/pre_check')
+        with cd("~/uni_ledger_unichain/unichain_docker_init/pre_check"):
+            hostname=sudo("hostname")
+            user=sudo("echo $HOME")
+            filepath = user + "/uni_ledger_unichain/unichain_docker_init/pre_check/env_node_{}".format(hostname)
+            sudo("rm {}".format(filepath))
+            put("./check_env_node.sh",
+                "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_env_node.sh", mode=0o644,
+                use_sudo=True)
+            sudo("chmod +x check_env_node.sh")
+            sudo("bash check_env_node.sh")
+            get(filepath, "../report/env_node_{}".format(hostname), use_sudo=True)

@@ -60,6 +60,7 @@ ALL_NODES=$[$CLUSTER_BIGCHAIN_COUNT+$MODIFY_NODES_COUNT]
 
 #init env:python3 fabric3
 echo -e "[INFO]=========init control machine env========="
+./init_node_env.sh
 ./run_init_env.sh
 
 #generate the unichain-archive.tar.gz
