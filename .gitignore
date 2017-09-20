@@ -23,6 +23,7 @@ var/
 keyring_bak/
 log/node_log/*
 *.egg-info/
+report/*
 .installed.cfg
 *.egg
 

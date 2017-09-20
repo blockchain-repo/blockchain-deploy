@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-env_check_report="env_check_report"
+env_check_report="env_check_report.txt"
 report="../report"
 if [ "`ls -A $report`"="" ];then
     rm -rf ../report/*
@@ -23,10 +23,18 @@ for file in ../report/*
 do
     if test -f $file
     then
-        cat $file | while read LINE
+        testfile=$file
+        x=`wc -l $testfile |awk '{print $1}'`
+        i=1
+        while [ $i -le $x ]
         do
-            echo $LINE >> $env_check_report
+            echo "`head -$i  $testfile | tail -1`" >> $env_check_report
+            i=`expr $i + 1`
         done
+#        cat $file | while read LINE
+#        do
+#            echo $LINE >> $env_check_report
+#        done
     fi
 done
 

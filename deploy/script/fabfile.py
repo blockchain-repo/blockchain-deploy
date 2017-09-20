@@ -849,14 +849,14 @@ def check_node_info():
         with cd("~/uni_ledger_unichain/unichain_docker_init/pre_check"):
             hostname=sudo("hostname")
             user=sudo("echo $HOME")
-            filepath = user + "/uni_ledger_unichain/unichain_docker_init/pre_check/env_node_{}".format(hostname)
+            filepath = user + "/uni_ledger_unichain/unichain_docker_init/pre_check/env_node_{}.txt".format(hostname)
             sudo("rm {}".format(filepath))
             put("./check_env_node.sh",
                 "~/uni_ledger_unichain/unichain_docker_init/pre_check/check_env_node.sh", mode=0o644,
                 use_sudo=True)
             sudo("chmod +x check_env_node.sh")
             sudo("bash check_env_node.sh")
-            get(filepath, "../report/env_node_{}".format(hostname), use_sudo=True)
+            get(filepath, "../report/env_node_{}.txt".format(hostname), use_sudo=True)
 
 
 #step:check port&process&data,conf path
