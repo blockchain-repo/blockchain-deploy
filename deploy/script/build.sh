@@ -35,6 +35,7 @@ Options:
                                 b.reconfigure rethinkdb|bigchaindb|unichain
                                 c.restart cluster nodes server
     server_check     after setup, check servers in cluster nodes are running
+    check_log        获取所有节点log信息
     update_config    更新配置信息
     init_env         初始化各节点所需环境
     add_node         增加节点
@@ -99,6 +100,10 @@ case $1 in
     add_node)
         ./modify_unichain_node.sh  | tee ../log/modify_unichain_node.log
         ./add_run_env_check.sh | tee ../log/add_run_env_check.log
+    ;;
+    check_log)
+        ./get_node_log.sh  | tee ../log/get_node_log.log
+        ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     delete_node)
         ./delete_unichain_node.sh  | tee ../log/delete_unichain_node.log

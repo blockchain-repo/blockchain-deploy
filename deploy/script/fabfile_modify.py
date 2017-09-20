@@ -1285,3 +1285,19 @@ def check_node_info():
             sudo("chmod +x check_env_node.sh")
             sudo("bash check_env_node.sh")
             get(filepath, "../report/env_node_{}".format(hostname), use_sudo=True)
+
+
+# 获取所有节点log
+@task
+@function_tips()
+def get_node_log():
+    with settings(warn_only=True):
+        user = sudo("echo $HOME")
+        hostname = sudo("hostname")
+        with cd(user):
+            filepath = user + '/unichain_log_{}.tar.gz'.format(hostname)
+            sudo("cp -a unichain-log unichain_log_{}".format(hostname))
+            sudo("tar -zcvf unichain_log_{}.tar.gz unichain_log_{}".format(hostname,hostname))
+            get(filepath, "../log/node_log/")
+            sudo("rm {}".format(filepath))
+            sudo("rm -rf ~/unichain_log_{}".format(hostname))

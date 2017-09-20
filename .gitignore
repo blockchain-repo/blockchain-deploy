@@ -21,6 +21,7 @@ parts/
 sdist/
 var/
 keyring_bak/
+log/node_log/*
 *.egg-info/
 .installed.cfg
 *.egg
