@@ -36,7 +36,7 @@ function get_python_bin_path
 
 function check_pip_3
 {
-    local pip_3_version=`pip3 --version|grep -i "/usr/local/"`
+    local pip_3_version=`pip3 --version|grep -i "/usr/"`
     if [ ! -z "$pip_3_version" ];then
         echo $pip_3_version
         return 0
