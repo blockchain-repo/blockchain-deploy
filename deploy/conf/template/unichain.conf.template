@@ -26,11 +26,12 @@
         "workers": null,
         "bind": "localhost:9984"
     },
+    "api_need_permission":false,
     "backlog_reassign_delay": 120,
     "argument_config": {
         "split_backlog":false,
         "block_pipeline.block_size" : 2000,
-        "block_pipeline.pipe_maxsize" : 4000,
+        "block_pipeline.pipe_maxsize" : 5000,
         "block_pipeline.fraction_of_cores":1,
         "block_pipeline.get_txs_processes_num":30,
         "block_pipeline.get_txs_everytime":200,
