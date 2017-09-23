@@ -654,7 +654,7 @@ def update_unichain_from_archive(service_name=None, setup_name=None):
         run('tar -zxvf unichain-archive.tar.gz')
 
         # must install dependency first!
-        with cd('./{}'.format(service_name)):
+        with cd('~/unichain'):
             sudo('python3 setup.py install')
 
         sudo('/bin/rm -f unichain-archive.tar.gz')
