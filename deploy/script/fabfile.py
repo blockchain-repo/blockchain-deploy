@@ -646,18 +646,20 @@ def update_unichain_from_archive(service_name=None, setup_name=None):
             print(red("error setup name"))
             return
 
-        put('unichain-archive.tar.gz')
+        put('unichain-archive.tar.gz' , '~/unichain-archive.tar.gz')
 
         sudo('/bin/rm -f /usr/local/bin/{}* 2>/dev/null'.format(service_name))
         sudo('/bin/rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
 
-        run('tar -zxvf unichain-archive.tar.gz')
+        with cd('~'):
+            sudo('tar -zxvf unichain-archive.tar.gz')
 
         # must install dependency first!
         with cd('~/unichain'):
             sudo('python3 setup.py install')
 
-        sudo('/bin/rm -f unichain-archive.tar.gz')
+        with cd('~'):
+            sudo('/bin/rm -f unichain-archive.tar.gz')
 
 
 # Initialize UnichainDB
