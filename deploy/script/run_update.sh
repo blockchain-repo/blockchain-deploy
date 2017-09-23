@@ -74,7 +74,7 @@ echo -e "[INFO]==========configure collectd=========="
 echo -e "[INFO]==========configure rethinkdb=========="
 ./configure_rethinkdb_norestart.sh
 echo -e "[INFO]==========reinstall chain=========="
-./install_unichain_archive.sh "local_tar_gz"
+./update_unichain_archive.sh
 echo -e "[INFO]==========configure unchain=========="
 ./update_unichain.sh ${CLUSTER_BIGCHAIN_COUNT}
 
