@@ -76,6 +76,7 @@ echo -e "[INFO]==========set replicas unichain=========="
 REPLICAS_NUM=`gen_replicas_num ${CLUSTER_BIGCHAIN_COUNT}`
 fab set_shards:${CLUSTER_BIGCHAIN_COUNT}
 fab set_replicas:${CLUSTER_BIGCHAIN_COUNT}
+fab set_shards:${CLUSTER_BIGCHAIN_COUNT}
 echo -e "[INFO]==========set shards unichain=========="
 
 #bak conf
