@@ -91,7 +91,7 @@ echo -e "[INFO]==========configure  rethinkdb=========="
 
 #localdb install
 echo -e "[INFO]==========install localdb=========="
-fab install_localdb
+#fab install_localdb
 #init localdb ,init the data store dirs /data/localdb_service_name/*
 fab init_localdb
 
