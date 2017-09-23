@@ -180,7 +180,7 @@ else
     echo   " " >> env_node_$hostaname.txt
 fi
 
-driver_port=`netstat -nlap|grep "LISTEN"|grep rethinkdb|grep "28015"`
+driver_port=`netstat -nlap|grep "28015"`
 if [ -z $driver_port ];then
     echo   "    rethinkdb：28015未被使用" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
@@ -188,7 +188,7 @@ else
     echo   "    rethinkdb：28015已被使用" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
 fi
-cluster_port=`netstat -nlap|grep "LISTEN"|grep rethinkdb|grep "29015"`
+cluster_port=`netstat -nlap|grep "29015"`
 if [ -z $cluster_port ];then
     echo   "    rethinkdb：29015未被使用" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
@@ -196,7 +196,7 @@ else
     echo   "    rethinkdb：29015已被使用" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
 fi
-http_port=`netstat -nlap|grep "LISTEN"|grep rethinkdb|grep "8080"`
+http_port=`netstat -nlap|grep "8080"`
 if [ -z $http_port ];then
     echo   "    rethinkdb：8080未被使用" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
@@ -212,7 +212,7 @@ else
     echo   "    unichain 进程数为：$unichain_number" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
 fi
-unichain_port=`netstat -nlap|grep "LISTEN"|grep "9984"`
+unichain_port=`netstat -nlap|grep "9984"`
 if [ -z $unichain_port ];then
     echo   "    unichain：9984未被使用" >> env_node_$hostaname.txt
     echo   " " >> env_node_$hostaname.txt
