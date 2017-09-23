@@ -60,7 +60,7 @@ ALL_NODES=$[$CLUSTER_BIGCHAIN_COUNT+$MODIFY_NODES_COUNT]
 
 #init env:python3 fabric3
 echo -e "[INFO]=========init control machine env========="
-./init_node_env.sh
+#./init_node_env.sh
 ./run_init_env.sh
 
 #generate the unichain-archive.tar.gz
@@ -85,7 +85,7 @@ echo -e "[INFO]==========configure collectd========="
 
 #rethinkdb install&configure
 echo -e "[INFO]==========install  rethinkdb=========="
-fab install_rethinkdb
+#fab install_rethinkdb
 echo -e "[INFO]==========configure  rethinkdb=========="
 ./modify_rethinkdb.sh
 
