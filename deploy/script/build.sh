@@ -102,7 +102,7 @@ case $1 in
         ./add_run_env_check.sh | tee ../log/add_run_env_check.log
     ;;
     check_log)
-        ./get_node_log.sh  | tee ../log/get_node_log.log
+        ./get_node_log.sh  $2| tee ../log/get_node_log.log
         ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
     delete_node)

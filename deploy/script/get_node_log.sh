@@ -25,7 +25,7 @@ do
         rm $file
     fi
 done
-
+grep $1 *
 cd ./../../script/
 echo -e "[INFO]=======get node log end======="
 echo -e ""
