@@ -22,13 +22,22 @@ do
     if test -f $file
     then
         tar -zxvf $file
-        cd $file
-        grep $1 *
-        cd ..
         rm $file
     fi
 done
 
+for data in ./*
+do
+    if test -d $data
+    then
+        cd $data
+            for data in ./*
+            do
+                grep $1 *
+            done
+        cd ..
+    fi
+done
 cd ./../../script/
 echo -e "[INFO]=======get node log end======="
 echo -e ""
