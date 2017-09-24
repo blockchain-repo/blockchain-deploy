@@ -336,6 +336,7 @@ def send_configure_rethinkdb():
             '/etc/rethinkdb/instances.d/default.conf',
             mode=0o600,
             use_sudo=True)
+        sudo("service rethinkdb restart")
 
 
 # delete the disk data for rethinkdb in /data/rethinkdb/*
