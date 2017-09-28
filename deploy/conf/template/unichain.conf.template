@@ -57,5 +57,5 @@
         "bind": "localhost:9986",
         "compress": true
     },
-     "need_local": true
+     "need_local": false
 }
