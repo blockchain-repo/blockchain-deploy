@@ -89,6 +89,7 @@ if [[ -z $AUTO_START_FLAG || $AUTO_START_FLAG -eq 1 ]];then
     for (( i=0; i<$CLUSTER_BIGCHAIN_COUNT; i++ )); do
             fab set_host:$i stop_unichain
             fab set_host:$i start_unichain
+            sleep 5
     done
     ./run_server_check.sh
 else
