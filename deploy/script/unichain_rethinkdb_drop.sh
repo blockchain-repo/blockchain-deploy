@@ -20,7 +20,7 @@ fi
 fab stop_unichain
 
 ## 初始化数据库
-fab set_host:0 unichain_drop_init ${CLUSTER_BIGCHAIN_COUNT}
+fab set_host:0 unichain_drop_init:${CLUSTER_BIGCHAIN_COUNT}
 
 ## 开始unichain服务
 fab start_unichain
