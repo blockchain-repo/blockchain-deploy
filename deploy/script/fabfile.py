@@ -1385,6 +1385,18 @@ def update_unichain_config(host_index):
         local('python3 update_node_confiles.py {}'.format(node_ip))
         put('unichain_conf', "~/.unichain")
 
+
+# 初始化数据库
+@task
+def unichain_drop_init(cluster_unichain_number):
+    with settings(warn_only=True):
+        with cd("~/unichain"):
+            sudo("unichain -y drop")
+            sudo("unichain innit")
+            sudo("unichain set-shards {}".format(cluster_unichain_number))
+            sudo("unichain set-replicas {}".format(cluster_unichain_number))
+
+
 #  获取所有节点log
 @task
 @function_tips()

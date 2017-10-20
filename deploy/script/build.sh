@@ -138,6 +138,10 @@ case $1 in
         ./unichain_init.sh $str_param | tee ../log/unichain_init.log
         ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
+     drop)
+       ./unichain_rethinkdb_drop.sh | tee ../log/unichain_rethinkdb_drop.log
+       ./run_env_check.sh | tee ../log/run_env_check.log
+    ;;
     *)
         usage
     ;;
