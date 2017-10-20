@@ -27,10 +27,12 @@
         "bind": "localhost:9984"
     },
     "api_need_permission":false,
+    "need_local":true,
     "backlog_reassign_delay": 120,
     "argument_config": {
+        "query_all_txs":true,
         "split_backlog":false,
-        "block_pipeline.block_size" : 2000,
+        "block_pipeline.block_size" : 200,
         "block_pipeline.pipe_maxsize" : 5000,
         "block_pipeline.fraction_of_cores":1,
         "block_pipeline.get_txs_processes_num":30,
@@ -44,18 +46,17 @@
         "stale_pipeline.assignee_timeout":100,
         "stale_pipeline.heartbeat_timeout":20,
         "vote_pipeline.fraction_of_cores":1,
-        "vote_pipeline.validate_processes_num":30,
-        "vote_pipeline.ungroup_processes_num":20
+        "vote_pipeline.validate_processes_num":50,
+        "vote_pipeline.ungroup_processes_num":50
     },
     "logger_config": {
-        "debug_to_file": true,
+        "debug_to_file": false,
         "debug_to_console": false
     },
     "restore_server": {
         "threads": null,
         "workers": null,
         "bind": "localhost:9986",
-        "compress": true
-    },
-     "need_local": false
+        "compress": false
+    }
 }
