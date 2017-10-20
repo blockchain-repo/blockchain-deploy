@@ -56,5 +56,6 @@
         "workers": null,
         "bind": "localhost:9986",
         "compress": true
-    }
+    },
+     "need_local": false
 }
