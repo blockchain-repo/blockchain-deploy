@@ -1392,7 +1392,7 @@ def unichain_drop_init(cluster_unichain_number):
     with settings(warn_only=True):
         with cd("~/unichain"):
             sudo("unichain -y drop")
-            sudo("unichain innit")
+            sudo("unichain init")
             sudo("unichain set-shards {}".format(cluster_unichain_number))
             sudo("unichain set-replicas {}".format(cluster_unichain_number))
 
