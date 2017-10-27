@@ -295,6 +295,7 @@ def update_node_hostname(use_conf=True, prefix="unichain", start=1, uni=False):
     with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
         update_node_host_boolean = conf.getboolean("on-off", "update-node-host", fallback=False)
         if not update_node_host_boolean:
+            print(env.host_string)
             print(red("[{}] host no change".format(env.host_string)))
             return
 
@@ -487,7 +488,6 @@ def create_new_user(node_info_new_user_section="node-info-new-user"):
             username = username_host_port[0]
             host = username_host_port[1].split(":")[0]
             old_host = env.host
-
             # filter other node
             if host != old_host:
                 continue
@@ -534,7 +534,7 @@ def create_new_user(node_info_new_user_section="node-info-new-user"):
                     print(magenta("[{}] update the password in blockchain_nodes(exist user).".format(new_user_host_string)))
 
                 exist_user_lines = local("grep '{}' {}|wc -l 2>/dev/null".format(env.host, file),
-                              capture=True)
+                                         capture=True)
 
                 if exist_user_lines == "0":
                     local("echo {} >> {}".format(

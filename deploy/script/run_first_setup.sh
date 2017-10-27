@@ -50,42 +50,30 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
     exit 1
 }
 
-#init env:python3 fabric3
-echo -e "[INFO]=========init control machine env========="
-./init_node_env.sh
-./run_init_env.sh
+#检查安装python3 fabric3
+echo -e "[INFO]==========check master env=========="
+./check_master_init.sh
+echo -e "[INFO]==========Done=========="
+echo -e "  "
 
-#generate the unichain-archive.tar.gz
+## 在线安装python3 及 fabric3
+#./run_init_env.sh
+
+## 下载并打包sources
 echo -e "[INFO]==========download and generate the unichain-archive.tar.gz=========="
-./unichain_init.sh -p
+./unichain_source_archive.sh
 
+## 检查sources包及unichain_template文件是否存在
 echo -e "[INFO]=========check control machine deploy files is ok!========="
 ./run_pre_check.sh
 
-echo -e "[INFO]=========check control machine deploy files is ok!========="
-./run_pre_check.sh
-
-#must remove old
+## 集群初始化
 echo -e "[INFO]==========init all nodes env=========="
-fab init_all_nodes:shred=True,times=1,show=False,config_del=True
+#fab init_all_nodes:shred=True,times=1,show=False,config_del=True
 
-#collectd install&configure
-echo -e "[INFO]==========install collectd========="
-#fab install_collectd
-echo -e "[INFO]==========configure collectd========="
-#./configure_collectd.sh
-
-#rethinkdb install&configure
-echo -e "[INFO]==========install  rethinkdb=========="
-fab install_rethinkdb
+## 配置rethinkdb集群信息
 echo -e "[INFO]==========configure  rethinkdb=========="
 ./configure_rethinkdb.sh
-
-#localdb install
-echo -e "[INFO]==========install localdb=========="
-fab install_localdb
-#init localdb ,init the data store dirs /data/localdb_service_name/*
-fab init_localdb
 
 #unichain install&configure&init&shards&replicas
 echo -e "[INFO]==========install unichain=========="

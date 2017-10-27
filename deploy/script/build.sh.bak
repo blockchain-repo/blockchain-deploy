@@ -19,35 +19,43 @@ Usage:
     $0 [\$1]
 Options:
     h|-h|help|-help usage help
-
-    ## 服务检查
-    env_check               环境检查
-    check_log               获取所有节点日志信息
-    drop                    初始化数据库
-
-    ## 服务部署
-    first_install           第一次安装unichain
-    add_node                增加节点
-    delete_node             删除节点
-
-    ## 服务升级
-    update                  更新unichain
-    update_config           更新unichain配置
-
-    ## 服务集群控制
-    start                   启动rethinkdb和unichain
-    stop                    停止rethinkdb和unichain
-    restart                 重启rethinkdb和unichain
-
-    ## rethinkdb集群控制
-    start_rethinkdb         启动rethinkdb
-    stop_rethinkdb          停止rethinkdb
-    restart_rethinkdb       重启rethinkdb
-
-    ## 区块链服务控制
-    start_unichain          启动unichain
-    stop_unichain           停止unichain
-    restart_unichain        重启unichain
+    env_check    before setup, check tools already in env
+    first_setup  \$1: nostart, if set \$1,it cann't start nodes after setup
+                 first setup:
+                    sence: first setup use
+                    op:    a.install base tools|depends libs|rethinkdb|bigchaindb|unichain
+                           b.configure rethinkdb|bigchaindb|unichain
+                           c.start cluster nodes server
+    update       \$1: nostart, if set \$1,it cann't start nodes after update
+                    update setup:
+                         sence: a. when unichain pro  is updated
+                                b. when unichain conf is updated
+                                c. when update fail, need rollback
+                         op:    a.update unichain
+                                b.reconfigure rethinkdb|bigchaindb|unichain
+                                c.restart cluster nodes server
+    server_check     after setup, check servers in cluster nodes are running
+    check_log        获取所有节点log信息
+    update_config    更新配置信息
+    init_env         初始化各节点所需环境
+    add_node         增加节点
+    delete_node      删除节点
+    start_all        start all cluster nodes
+    stop_all         stop  sll cluster nodes
+    start_node       start signal cluster node
+    stop_node        stop  signal cluster node
+    install_node     install or reinstall single cluster node
+    uninstall        uninstall unichain
+    unichain_init    update or downnload the unichain
+                        usage:
+                            -h  使用帮助
+                            -g  使用git方式对代码进行更新打包
+                            -b  git方式操作对应的分支
+                            -s  下载代码仓库地址
+                            -u  更新代码，如果不存在则使用git方式下载代码
+                            -p  对代码进行打包，生成unichain-archive.tar.gz，并copy至sources下
+                                如果选择git方式打包，则使用git archive, 否则默认为tar & gzip 打包
+                            -d  删除下载的unichain代码及生成的unichain-archive.tar.gz文件
     "
     return 0
 }
@@ -62,7 +70,7 @@ case $1 in
     env_check)
         ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
-    first_install)
+    first_setup)
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./run_first_setup.sh $str_param | tee ../log/run_first_setup.log
         ./run_env_check.sh | tee ../log/run_env_check.log
@@ -76,7 +84,7 @@ case $1 in
         ./run_server_check.sh | tee ../log/run_server_check.log
         ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
-    start)
+    start_all)
         ./clustercontrol.sh start | tee ../log/clustercontrol_start.log
         ./run_env_check.sh | tee ../log/run_env_check.log
         ./run_server_check.sh | tee ../log/run_server_check.log 
@@ -101,14 +109,8 @@ case $1 in
         ./delete_unichain_node.sh  | tee ../log/delete_unichain_node.log
         ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
-    stop)
+    stop_all)
         ./clustercontrol.sh stop | tee ../log/clustercontrol_stop.log
-        ./run_server_check.sh | tee ../log/run_server_check.log
-        ./run_env_check.sh | tee ../log/run_env_check.log
-    ;;
-    restart)
-        ./clustercontrol.sh stop | tee ../log/clustercontrol_stop.log
-        ./clustercontrol.sh start | tee ../log/clustercontrol_start.log
         ./run_server_check.sh | tee ../log/run_server_check.log
         ./run_env_check.sh | tee ../log/run_env_check.log
     ;;
@@ -121,26 +123,6 @@ case $1 in
         str_param=`echo $@|awk '{for(i=2;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`
         ./stopnode.sh $str_param | tee ../log/stopnode.log
         ./run_env_check.sh | tee ../log/run_env_check.log
-    ;;
-    start_rethinkdb)
-        fab start_rethinkdb
-    ;;
-    stop_rethinkdb)
-        fab stop_rethinkdb
-    ;;
-    restart_rethinkdb)
-        fab stop_rethinkdb
-        fab start_rethinkdb
-    ;;
-    start_unichain)
-        fab start_unichain
-    ;;
-    stop_unichain)
-        fab stop_unichain
-    ;;
-    restart_unichain)
-        fab stop_unichain
-        fab start_unichain
     ;;
     install_node)
         str_param=`echo $@|awk '{for(i=3;i<=NF;i++){if(i!=NF)print $i" ";else print $i}}'`

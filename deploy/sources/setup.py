@@ -12,7 +12,7 @@ with open('bigchaindb/version.py') as fp:
     exec(fp.read(), version)
 
 unichain_config = {}
-with open('bigchaindb/__init__.py') as fp:
+with open('bigchaindb/base_config.py') as fp:
     exec(fp.read(), unichain_config)
 
 if not unichain_config:
@@ -20,10 +20,9 @@ if not unichain_config:
     app_setup_name = "UnichainDB"
 
 else:
-    base_unichain_config = unichain_config['_app_config']
+    base_unichain_config = unichain_config['unichain_config']['server_config']
     app_service_name = base_unichain_config['service_name']
     app_setup_name = base_unichain_config['setup_name']
-
 
 # check if setuptools is up to date
 def check_setuptools_features():
@@ -69,7 +68,7 @@ benchmarks_require = [
 
 install_requires = [
     'rethinkdb~=2.3',  # i.e. a version between 2.3 and 3.0
-    'pysha3>0.3',
+    'pysha3~=1.0.2',
     'cryptoconditions~=0.5.0',
     'statsd~=3.2.1',
     'python-rapidjson~=0.0.6',
@@ -79,6 +78,7 @@ install_requires = [
     'requests~=2.9',
     'gunicorn~=19.0',
     'multipipes~=0.1.0',
+    'pycrypto~=2.6.1',
 ]
 
 setup(
