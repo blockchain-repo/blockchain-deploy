@@ -11,6 +11,7 @@ import os
 from os import environ  # a mapping (like a dict)
 import sys
 
+import rethinkdb as r
 import time
 import datetime
 import json
@@ -589,8 +590,8 @@ def send_confile(confile, service_name=None):
 @parallel
 @function_tips()
 def install_unichain_from_archive(service_name=None, setup_name=None):
-    # with settings(hide('running', 'stdout'), warn_only=True):
-    with settings(warn_only=True):
+    with settings(hide('running', 'stdout'), warn_only=True):
+    # with settings(warn_only=True):
         if not service_name:
             service_name = _service_name
         if not setup_name:
@@ -608,22 +609,26 @@ def install_unichain_from_archive(service_name=None, setup_name=None):
 
         sudo('/bin/rm -f /usr/local/bin/{}* 2>/dev/null'.format(service_name))
         sudo('/bin/rm -rf /usr/local/lib/python3.4/dist-packages/{}* 2>/dev/null'.format(setup_name))
-
-        with settings(warn_only=True):
-            if run("test -d ~/{}".format(service_name)).failed:
-                print(blue("create {} directory".format(service_name)))
-                sudo("mkdir -p ~/{}".format(service_name), user=env.user, group=env.user)
-                # sudo("chown -R " + user_group + ':' + user_group + ' ~/')
-            else:
-                print(blue("remove old {} directory".format(service_name)))
-                sudo("/bin/rm -rf {}/*".format(service_name))
-
-        run('tar zxf unichain-archive.tar.gz -C {} >/dev/null 2>&1'.format(service_name))
-
-        # must install dependency first!
-        with cd('./{}'.format(service_name)):
+        with cd("~/"):
+            sudo("tar -zxvf unichain-archive.tar.gz")
+        sudo("chown -R " + env.user + ':' + env.user + ' ~/')
+        with cd("~/unichain"):
             sudo('python3 setup.py install')
-
+        # with settings(warn_only=True):
+        #     if run("test -d ~/{}".format(service_name)).failed:
+        #         print(blue("create {} directory".format(service_name)))
+        #         sudo("mkdir -p ~/{}".format(service_name), user=env.user, group=env.user)
+        #         # sudo("chown -R " + user_group + ':' + user_group + ' ~/')
+        #     else:
+        #         print(blue("remove old {} directory".format(service_name)))
+        #         sudo("/bin/rm -rf {}/*".format(service_name))
+        #
+        # run('tar zxf unichain-archive.tar.gz -C {} >/dev/null 2>&1'.format(service_name))
+        #
+        # # must install dependency first!
+        # with cd('./{}'.format(service_name)):
+        #     sudo('python3 setup.py install')
+        #
         sudo('/bin/rm -f unichain-archive.tar.gz')
 
 # Install UnichainDB from the archive file
@@ -672,7 +677,7 @@ def update_unichain_from_archive(service_name=None, setup_name=None):
 @runs_once
 @function_tips()
 def init_unichain(service_name=None, shards=False, replicas=False):
-    with settings(warn_only=True):
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
         if not service_name:
             service_name = _service_name
         stop_unichain()
@@ -710,11 +715,12 @@ def drop_unichain(service_name=None):
 @task
 @function_tips()
 def set_shards(num_shards=len(public_dns_names), service_name=None):
-    # num_shards = len(public_hosts)
-    if not service_name:
-        service_name = _service_name
-    run('{} set-shards {}'.format(service_name, num_shards))
-    run("echo set shards = {}".format(num_shards))
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        # num_shards = len(public_hosts)
+        if not service_name:
+            service_name = _service_name
+        run('{} set-shards {}'.format(service_name, num_shards))
+        run("echo set shards = {}".format(num_shards))
 
 
 # Set the number of replicas (tables[bigchain,votes,backlog])
@@ -722,10 +728,11 @@ def set_shards(num_shards=len(public_dns_names), service_name=None):
 @task
 @function_tips()
 def set_replicas(num_replicas=(int(len(public_dns_names)/2)+1), service_name=None):
-    if not service_name:
-        service_name = _service_name
-    run('{} set-replicas {}'.format(service_name, num_replicas))
-    run("echo set replicas = {}".format(num_replicas))
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        if not service_name:
+            service_name = _service_name
+        run('{} set-replicas {}'.format(service_name, num_replicas))
+        run("echo set replicas = {}".format(num_replicas))
 
 
 # unichain_restore_app
@@ -947,40 +954,63 @@ def check_unichain_api(service_name=None):
 ################################ Detect server ######################################
 #step: get port & detect port
 @task
+@parallel
 @function_tips()
-def detect_rethinkdb():
-    with settings(warn_only=True):
-        print("[INFO]==========detect rethinkdb begin==========")
-        rethinkdb_conf = "/etc/rethinkdb/instances.d/default.conf"
-        driver_port = sudo('cat %s|grep -v "^#"|grep "driver-port="|awk -F"=" \'{print $2}\'' % (rethinkdb_conf))
-        cluster_port = sudo('cat %s|grep -v "^#"|grep "cluster-port="|awk -F"=" \'{print $2}\'' % (rethinkdb_conf))
-        http_port = sudo('cat %s|grep -v "^#"|grep "http-port="|awk -F"=" \'{print $2}\'' % (rethinkdb_conf))
-        if not driver_port :
-            driver_port = 28015
-        if not cluster_port:
-            cluster_port = 29015
-        if not http_port:
-            http_port = 8080
-        check_driver_port=sudo('netstat -nlap|grep "LISTEN"|grep rethinkdb|grep ":%s"' % (driver_port))
-        if not check_driver_port:
-            print("[ERROR]=====driver_port[%s] detect result: NOT exist!" % (driver_port))
+def detect_rethinkdb(index, db="bigchain",port=28015):
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        hostname = sudo("hostname")
+        ## 判断rethinkdb进程数
+        rethink_number = len(env["hosts"])
+        process_num = int(run('ps -aux|grep -E "/usr/bin/rethinkdb"|grep -v grep|wc -l'))
+        print(yellow("rethinkdb 集群个数： {}".format(rethink_number)))
+        if process_num < 3:
+
+            print(red("{} 节点 rethinkdb 进程数为： {}，请及时处理！！！".format(hostname, process_num)))
         else:
-            print("[INFO]=====driver_port[%s] detect result: is OK!" % (driver_port))
-        check_cluster_port=sudo('netstat -nlap|grep "LISTEN"|grep rethinkdb|grep ":%s"' % (cluster_port))
-        if not check_cluster_port:
-            print("[ERROR]=====cluster_port[%s] detect result: not alive" % (cluster_port))
-        else:
-            print("[INFO]=====cluster_port[%s] detect result:  is OK!" % (cluster_port))
-        check_http_port=sudo('netstat -nlap|grep "LISTEN"|grep rethinkdb|grep ":%s"' % (http_port))
-        if not check_http_port:
-            print("[ERROR]=====http_port[%s] detect result: not alive" % (http_port))
-        else:
-            print("[INFO]=====http_port[%s] detect result: is OK!" % (http_port))
-        process_num=run('ps -aux|grep -E "/usr/bin/rethinkdb"|grep -v grep|wc -l')
-        if process_num == 0:
-            print("[ERROR]=====process[rethinkdb] num detect result: is 0")
-        else:
-            print("[INFO]=====process[rethinkdb] num detect result: is %s" % (str(process_num)))
+            print(blue("{} 节点 rethinkdb 进程数为： {}！！！".format(hostname, process_num)))
+
+        ## 获取各节点的表的分片备份数
+        node_ip = public_hosts[int(index)]
+        try:
+            conn = r.connect(host=node_ip, port=port, db=db)
+            table_list = r.db('bigchain').table_list().run(conn)
+            print(blue("rethinkdb集群数据库为：{}，共有 {} 张表，详情：".format(db, len(table_list))))
+            for table in table_list:
+                table_status = r.table(table).status().run(conn)
+                print(blue("    {} 表共有分片数：{}，备份数：{}".format(table, len(table_status["shards"]),
+                                                            len(table_status["shards"][0]["replicas"]))))
+        except Exception as e:
+            print(red("{} 节点连接rethinkdb失败，请及时处理！！！".format(hostname)))
+            # rethinkdb_conf = "/etc/rethinkdb/instances.d/default.conf"
+            # driver_port = sudo('cat %s|grep -v "^#"|grep "driver-port="|awk -F"=" \'{print $2}\'' % (rethinkdb_conf))
+            # cluster_port = sudo('cat %s|grep -v "^#"|grep "cluster-port="|awk -F"=" \'{print $2}\'' % (rethinkdb_conf))
+            # http_port = sudo('cat %s|grep -v "^#"|grep "http-port="|awk -F"=" \'{print $2}\'' % (rethinkdb_conf))
+            # if not driver_port :
+            #     driver_port = 28015
+            # if not cluster_port:
+            #     cluster_port = 29015
+            # if not http_port:
+            #     http_port = 8080
+            # check_driver_port=sudo('netstat -nlap|grep "LISTEN"|grep rethinkdb|grep ":%s"' % (driver_port))
+            # if not check_driver_port:
+            #     print("[ERROR]=====driver_port[%s] detect result: NOT exist!" % (driver_port))
+            # else:
+            #     print("[INFO]=====driver_port[%s] detect result: is OK!" % (driver_port))
+            # check_cluster_port=sudo('netstat -nlap|grep "LISTEN"|grep rethinkdb|grep ":%s"' % (cluster_port))
+            # if not check_cluster_port:
+            #     print("[ERROR]=====cluster_port[%s] detect result: not alive" % (cluster_port))
+            # else:
+            #     print("[INFO]=====cluster_port[%s] detect result:  is OK!" % (cluster_port))
+            # check_http_port=sudo('netstat -nlap|grep "LISTEN"|grep rethinkdb|grep ":%s"' % (http_port))
+            # if not check_http_port:
+            #     print("[ERROR]=====http_port[%s] detect result: not alive" % (http_port))
+            # else:
+            #     print("[INFO]=====http_port[%s] detect result: is OK!" % (http_port))
+            # process_num=run('ps -aux|grep -E "/usr/bin/rethinkdb"|grep -v grep|wc -l')
+            # if process_num == 0:
+            #     print("[ERROR]=====process[rethinkdb] num detect result: is 0")
+            # else:
+            #     print("[INFO]=====process[rethinkdb] num detect result: is %s" % (str(process_num)))
 
 
 #step: get port & detect port & detect process
@@ -995,49 +1025,93 @@ def detect_localdb():
 @task
 @function_tips()
 def detect_unichain(service_name=None):
-    with settings(warn_only=True):
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        hostname = sudo("hostname")
         if not service_name:
             service_name = _service_name
         print("[INFO]==========detect {} pro begin==========".format(service_name))
-        process_num=run('ps -aux|grep -E "/usr/local/bin/{} -y start|SCREEN -d -m {} -y start"|grep -v grep|wc -l'
-                        .format(service_name, service_name))
-        if int(process_num) == 0:
-            print("[ERROR]=====process[{}] num detect result: is 0".format(service_name))
+        unichain_number = len(env["hosts"])
+        process_num=int(run('ps -aux|grep -E "/usr/local/bin/{} -y start|SCREEN -d -m {} -y start"|grep -v grep|wc -l'
+                        .format(service_name, service_name)))
+        print(yellow("unichain_number 集群个数： {}".format(unichain_number)))
+        cpu_thread = int(sudo('cat /proc/cpuinfo| grep "processor"| wc -l'))
+        if process_num < cpu_thread:
+
+            print(red("{} 节点 unichain 进程数为： {}，请及时处理！！！".format(hostname, process_num)))
         else:
-            print("[INFO]=====process[{}] num detect result: is {}".format(service_name, process_num))
+            print(blue("{} 节点 unichain 进程数为： {}！！！".format(hostname, process_num)))
+
+        # if int(process_num) == 0:
+        #     print("[ERROR]=====process[{}] num detect result: is 0".format(service_name))
+        # else:
+        #     print("[INFO]=====process[{}] num detect result: is {}".format(service_name, process_num))
+
 
 #step: get port & detect port & detect process
 @task
 @function_tips()
 def detect_unichain_api(service_name=None):
-    with settings(warn_only=True):
+    with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
+        hostname = sudo("hostname")
         if not service_name:
             service_name = _service_name
-        print("[INFO]==========detect {} api begin==========".format(service_name))
-        process_num=run('ps -aux|grep -E "/usr/local/bin/{}_api start|SCREEN -d -m {}_api start"|grep -v grep|wc -l'
-                        .format(service_name, service_name))
-        if int(process_num) == 0:
-            print("[ERROR]=====process[{}_api] num detect result: is 0".format(service_name))
+        print("[INFO]==========detect {} pro begin==========".format(service_name))
+        unichain_number = len(env["hosts"])
+        process_num=int(run('ps -aux|grep -E "/usr/local/bin/{}_api start|SCREEN -d -m {}_api start"|grep -v grep|wc -l'
+                        .format(service_name, service_name)))
+        print(yellow("unichain_number 集群个数： {}".format(unichain_number)))
+        if process_num == 0:
+            print(red("{} 节点 unichain_api 进程数为： {}，请及时处理！！！".format(hostname, process_num)))
         else:
-            print("[INFO]=====process[{}] num detect result: is {}".format(service_name, process_num))
+            print(blue("{} 节点 unichain_api 进程数为： {}！！！".format(hostname, process_num)))
 
-        unichain_conf = "/home/{}/.{}".format(env.user, service_name)
+        # if not service_name:
+        #     service_name = _service_name
+        # print("[INFO]==========detect {} api begin==========".format(service_name))
+        # process_num=run('ps -aux|grep -E "/usr/local/bin/{}_api start|SCREEN -d -m {}_api start"|grep -v grep|wc -l'
+        #                 .format(service_name, service_name))
+        # if int(process_num) == 0:
+        #     print("[ERROR]=====process[{}_api] num detect result: is 0".format(service_name))
+        # else:
+        #     print("[INFO]=====process[{}] num detect result: is {}".format(service_name, process_num))
+
+        # unichain_conf = "/home/{}/.{}".format(env.user, service_name)
         unichain_conf_str=run('cat ~/.{}'.format(service_name))
         #with open(unichain_conf, "a") as r:
         #    unichain_conf_str=r.readline()
         unichain_conf_str.replace("null", "")
-        unichain_dict = json.loads(unichain_conf_str)
-        server_url = str(unichain_dict["server"]["bind"])
-        api_endpoint = str(unichain_dict["api_endpoint"])
-        if server_url.startswith("0.0.0.0"):
-            api_url = api_endpoint.replace("/uniledger/v1", "")
-            api_detect_res = run('curl -i %s 2>/dev/null|head -1|grep "200 OK"' % (api_url))
-            if not api_detect_res:
-                print("[ERROR]=====api[%s] detect result: is not requested!!!" % (api_url))
+        try:
+            # api_detect_res = run('curl -i %s 2>/dev/null|head -1|grep "200 OK"' % (api_url))
+            unichain_dict = json.loads(unichain_conf_str)
+            server_url = str(unichain_dict["server"]["bind"])
+            api_endpoint = str(unichain_dict["api_endpoint"])
+            if server_url.startswith("0.0.0.0"):
+                api_url = api_endpoint.replace("/uniledger/v1", "")
+                try:
+                    # api_detect_res = run('curl -i %s 2>/dev/null|head -1|grep "200 OK"' % (api_url))
+                    api_detect_res = run('curl %s' % (api_url))
+                except Exception as e:
+                    print(red("{} 节点请求不到，请及时处理！！！".format(hostname)))
+                if not api_detect_res:
+                    print(red("{} 节点请求不到，请及时处理！！！".format(hostname)))
+                else:
+                    result = eval(api_detect_res)
+                    keyring_list = []
+                    for key in result["keyring"]:
+                        keyring_list.append(key)
+                    keyring_list.append(result["public_key"])
+                    print(blue("{} 节点公约环为：{}".format(hostname, keyring_list)))
+                    keyring_file = open("少时诵诗书所所所所所所所所所所所所.txt", "w")
+                    # 将文件名写入到指定文件中
+                    keyring_file.write(keyring_list)
+                    # 关闭
+                    keyring_file.close()
+                    # print(result["public_key"])
             else:
-                print("[INFO]=====api[%s] detect result: is OK!" % (api_url))
-        else:
-            print("[ERROR]=====api[%s] detect result:  is not requested!" % (api_endpoint))
+                print(red("{} 节点请求不到，请及时处理！！！".format(hostname)))
+                # print("[ERROR]=====api[%s] detect result:  is not requested!" % (api_endpoint))
+        except Exception as e:
+            print(red("{} 节点请求不到，请及时处理！！！".format(hostname)))
 
 
 #########################bak conf task#########################

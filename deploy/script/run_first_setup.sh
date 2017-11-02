@@ -52,7 +52,7 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 
 #检查安装python3 fabric3
 echo -e "[INFO]==========check master env=========="
-./check_master_init.sh
+./check_env_master.sh
 echo -e "[INFO]==========Done=========="
 echo -e "  "
 
