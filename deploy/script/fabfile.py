@@ -960,7 +960,7 @@ def detect_rethinkdb(index, db="bigchain",port=28015):
     with settings(hide('warnings', 'running', 'stdout'), warn_only=True):
         hostname = sudo("hostname")
         ## 判断rethinkdb进程数
-        rethink_number = len(env["hosts"])
+        rethink_number = len(public_hosts)
         process_num = int(run('ps -aux|grep -E "/usr/bin/rethinkdb"|grep -v grep|wc -l'))
         print(blue("rethinkdb 集群个数： {}".format(rethink_number)))
         if process_num < 3:
@@ -973,7 +973,7 @@ def detect_rethinkdb(index, db="bigchain",port=28015):
         node_ip = public_hosts[int(index)]
         try:
             conn = r.connect(host=node_ip, port=port, db=db)
-            table_list = r.db('bigchain').table_list().run(conn)
+            table_list = r.db(db).table_list().run(conn)
             print(blue("rethinkdb集群数据库为：{}，共有 {} 张表，详情：".format(db, len(table_list))))
             for table in table_list:
                 table_status = r.table(table).status().run(conn)
@@ -1030,7 +1030,7 @@ def detect_unichain(service_name=None):
         if not service_name:
             service_name = _service_name
         print("[INFO]==========detect {} pro begin==========".format(service_name))
-        unichain_number = len(env["hosts"])
+        unichain_number = len(public_hosts)
         process_num=int(run('ps -aux|grep -E "/usr/local/bin/{} -y start|SCREEN -d -m {} -y start"|grep -v grep|wc -l'
                         .format(service_name, service_name)))
         print(blue("unichain_number 集群个数： {}".format(unichain_number)))
@@ -1056,7 +1056,7 @@ def detect_unichain_api(service_name=None):
         if not service_name:
             service_name = _service_name
         print("[INFO]==========detect {} pro begin==========".format(service_name))
-        unichain_number = len(env["hosts"])
+        unichain_number = len(public_pwds)
         process_num=int(run('ps -aux|grep -E "/usr/local/bin/{}_api start|SCREEN -d -m {}_api start"|grep -v grep|wc -l'
                         .format(service_name, service_name)))
         print(blue("unichain_number 集群个数： {}".format(unichain_number)))
@@ -1112,6 +1112,8 @@ def detect_unichain_api(service_name=None):
 @function_tips()
 def detect_unichain_config():
     with settings(hide('warnings', 'running'), warn_only=True):
+        hostname = sudo("hostname")
+        get('~/.unichain', '../report/conf/{}'.format(hostname), use_sudo=True)
         local("python3 detect_unichain_config.py")
 
 #########################bak conf task#########################
