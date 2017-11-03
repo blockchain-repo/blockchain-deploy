@@ -11,28 +11,23 @@ CLUSTER_BIGCHAIN_COUNT=`get_cluster_nodes_num`
 }
 
 #detect rethinkdb
-# get port & check port & check process
-echo -e "[INFO]===========detect rethinkdb==========="
+echo -e "[INFO]===========检测rethinkdb进程及分片及副本数==========="
 for((i=0; i<${CLUSTER_BIGCHAIN_COUNT}; i++));do
     fab set_host:$i detect_rethinkdb:$i
 done
 #detect localdb
-# get port & check port & check process
-echo -e "[INFO]===========detect localdb==========="
+echo -e "[INFO]===========检测localdb==========="
 fab detect_localdb
 
 #detect unichain-pro
-# get bigchain port & check port & check process
-echo -e "[INFO]===========detect unichain=========="
-for((i=0; i<${CLUSTER_BIGCHAIN_COUNT}; i++));do
-    fab set_host:$i detect_unichain
-done
+echo -e "[INFO]===========检测unichain集群个数及进程数=========="
+fab detect_unichain
 
 #detect unichain-api
-# get api port & check port & check api
-echo -e "[INFO]===========detect unichain-api==========="
-for((i=0; i<${CLUSTER_BIGCHAIN_COUNT}; i++));do
-    fab set_host:$i detect_unichain_api
-done
+echo -e "[INFO]===========检测unichain集群个数及api进程数==========="
+fab detect_unichain_api
+
+echo -e "[INFO]===========检测unichain的公约环==========="
+fab set_host:0 detect_unichain_config
 
 exit 0

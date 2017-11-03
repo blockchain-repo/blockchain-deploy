@@ -962,7 +962,7 @@ def detect_rethinkdb(index, db="bigchain",port=28015):
         ## 判断rethinkdb进程数
         rethink_number = len(env["hosts"])
         process_num = int(run('ps -aux|grep -E "/usr/bin/rethinkdb"|grep -v grep|wc -l'))
-        print(yellow("rethinkdb 集群个数： {}".format(rethink_number)))
+        print(blue("rethinkdb 集群个数： {}".format(rethink_number)))
         if process_num < 3:
 
             print(red("{} 节点 rethinkdb 进程数为： {}，请及时处理！！！".format(hostname, process_num)))
@@ -1033,7 +1033,7 @@ def detect_unichain(service_name=None):
         unichain_number = len(env["hosts"])
         process_num=int(run('ps -aux|grep -E "/usr/local/bin/{} -y start|SCREEN -d -m {} -y start"|grep -v grep|wc -l'
                         .format(service_name, service_name)))
-        print(yellow("unichain_number 集群个数： {}".format(unichain_number)))
+        print(blue("unichain_number 集群个数： {}".format(unichain_number)))
         cpu_thread = int(sudo('cat /proc/cpuinfo| grep "processor"| wc -l'))
         if process_num < cpu_thread:
 
@@ -1059,7 +1059,7 @@ def detect_unichain_api(service_name=None):
         unichain_number = len(env["hosts"])
         process_num=int(run('ps -aux|grep -E "/usr/local/bin/{}_api start|SCREEN -d -m {}_api start"|grep -v grep|wc -l'
                         .format(service_name, service_name)))
-        print(yellow("unichain_number 集群个数： {}".format(unichain_number)))
+        print(blue("unichain_number 集群个数： {}".format(unichain_number)))
         if process_num == 0:
             print(red("{} 节点 unichain_api 进程数为： {}，请及时处理！！！".format(hostname, process_num)))
         else:
@@ -1101,18 +1101,18 @@ def detect_unichain_api(service_name=None):
                         keyring_list.append(key)
                     keyring_list.append(result["public_key"])
                     print(blue("{} 节点公约环为：{}".format(hostname, keyring_list)))
-                    keyring_file = open("少时诵诗书所所所所所所所所所所所所.txt", "w")
-                    # 将文件名写入到指定文件中
-                    keyring_file.write(keyring_list)
-                    # 关闭
-                    keyring_file.close()
-                    # print(result["public_key"])
+                    get('~/.unichain', '../report/conf/{}'.format(hostname), use_sudo=True)
             else:
                 print(red("{} 节点请求不到，请及时处理！！！".format(hostname)))
                 # print("[ERROR]=====api[%s] detect result:  is not requested!" % (api_endpoint))
         except Exception as e:
             print(red("{} 节点请求不到，请及时处理！！！".format(hostname)))
 
+@task
+@function_tips()
+def detect_unichain_config():
+    with settings(hide('warnings', 'running'), warn_only=True):
+        local("python3 detect_unichain_config.py")
 
 #########################bak conf task#########################
 @task
@@ -1122,6 +1122,7 @@ def bak_rethinkdb_conf(base):
     with settings(hide('running', 'stdout'), warn_only=True):
         get('/etc/rethinkdb/instances.d/default.conf',
             '%s/rethinkdb/default.conf_%s_%s' % (base, env.user, env.host), use_sudo=True)
+
 
 @task
 @parallel
